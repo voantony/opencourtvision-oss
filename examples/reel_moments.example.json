@@ -1,0 +1,22 @@
+{
+  "source": "source/match.mp4",
+  "output": "exports/reel_ball_follow.mp4",
+  "rallies": "work/rallies.json",
+  "events": "work/events.json",
+  "source_size": [3840, 2160],
+  "fps": 60,
+  "aspect": "9:16",
+  "sport": "tennis",
+  "camera": {"jerk_baseline": 0.333333, "max_wide": 1,
+             "jerk_baseline_source": "cross-check (option b): v3 rendered crop centre, 9-frame centred mean, pooled per moment, n=4110; v3 float path not recoverable (ball track not kept)"},
+  "title": "DOUBLES · 6-4 6-3",
+  "end_card": {"top": "Team A", "middle": "def.", "bottom": "Team B", "score": "6-4  6-3"},
+  "moments": [
+    {"name": "hook", "start": 3605.0, "end": 3606.1, "punch_in": true},
+    {"name": "m1", "start": 1200.0, "end": 1211.5, "snap": true, "ramps": [1210.0], "caption_trigger": "rally_of_match", "title": true},
+    {"name": "m2", "start": 1850.0, "end": 1859.4, "snap": true, "caption_trigger": "net_exchange"},
+    {"name": "m3", "start": 2400.0, "end": 2409.9, "snap": true, "ramps": [2407.4], "caption_trigger": "break_point"},
+    {"name": "m4", "start": 3596.0, "end": 3606.0, "snap": true, "ramps": [3605.5], "caption_trigger": "match_point"},
+    {"name": "end", "start": 3606.0, "end": 3609.0, "end_card": true}
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/opencourtvision/ocv.public_labels.v1.schema.json",
+  "title": "ocv.public_labels.v1",
+  "type": "object",
+  "required": ["schema", "video", "match", "points"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {"const": "ocv.public_labels.v1"},
+    "video": {
+      "type": "object",
+      "required": ["name", "licence"],
+      "properties": {
+        "name": {"type": "string"},
+        "licence": {"enum": ["CC0", "CC BY", "synthetic"]},
+        "url": {"type": "string"},
+        "attribution": {"type": "string"},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "match": {
+      "type": "object",
+      "required": ["sport", "preset", "first_server", "mine", "source_licence"],
+      "properties": {
+        "sport": {"enum": ["tennis", "padel"]},
+        "preset": {"type": "string"},
+        "first_server": {"enum": ["A", "B"]},
+        "mine": {"enum": ["A", "B"]},
+        "source_licence": {"enum": ["CC0", "CC BY", "synthetic"]},
+        "final_hint": {"type": "string"}
+      }
+    },
+    "points": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["idx", "start", "end", "kind"],
+        "properties": {
+          "idx": {"type": "integer"},
+          "start": {"type": "number"},
+          "end": {"type": "number"},
+          "kind": {"enum": ["point", "non_point"]},
+          "winner": {"enum": ["A", "B", null]},
+          "server": {"enum": ["A", "B", null]},
+          "shots": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["t", "hitter"],
+              "properties": {
+                "t": {"type": "number"},
+                "hitter": {"enum": ["near_deuce", "near_ad", "far_deuce", "far_ad"]},
+                "kind": {"type": "string"}
+              }
+            }
+          },
+          "bounces": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["t"],
+              "properties": {
+                "t": {"type": "number"},
+                "x_m": {"type": ["number", "null"]},
+                "y_m": {"type": ["number", "null"]}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

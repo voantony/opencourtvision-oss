@@ -1,0 +1,7 @@
+rater_id,output,match_id,sport,vote,reason,killer_tag
+r01,reel,club_padel_1,padel,ours,"kept the glass rebound",
+r01,full_cut,club_padel_1,padel,sv,"one point cut early",cut_off
+r02,reel,club_padel_1,padel,tie,"both fine",
+r02,full_cut,club_padel_1,padel,ours,"no dead time",
+r03,reel,club_tennis_1,tennis,ours,"better hook",
+r03,top3,club_tennis_1,tennis,ours,"best rallies picked",

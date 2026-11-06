@@ -1,0 +1,71 @@
+{
+  "dataset": "synthetic-in-memory",
+  "release": "work in progress",
+  "far_player_recall": {
+    "p": 0.0,
+    "lo": 0.0,
+    "hi": 0.0458197362645751,
+    "half": 0.02290986813228755,
+    "k": 0,
+    "n": 80
+  },
+  "primary": {
+    "ball_recall_far_half": {
+      "p": 0.8,
+      "lo": 0.6524239261814333,
+      "hi": 0.8950013502683314,
+      "half": 0.12128871204344904,
+      "k": 32,
+      "n": 40
+    },
+    "ball_recall_fast_blurry": {
+      "p": 0.0,
+      "lo": 0.0,
+      "hi": 0.19361341827271994,
+      "half": 0.09680670913635997,
+      "k": 0,
+      "n": 16
+    },
+    "far_player_recall": {
+      "p": 0.0,
+      "lo": 0.0,
+      "hi": 0.0458197362645751,
+      "half": 0.02290986813228755,
+      "k": 0,
+      "n": 80
+    },
+    "bounce_recall": {
+      "p": 0.0,
+      "lo": 0.0,
+      "hi": 0.16113012549493322,
+      "half": 0.08056506274746661,
+      "k": 0,
+      "n": 20
+    },
+    "point_end_recall": {
+      "p": 1.0,
+      "lo": 0.8388698745050667,
+      "hi": 1.0,
+      "half": 0.08056506274746666,
+      "k": 20,
+      "n": 20
+    }
+  },
+  "calibration_report": {
+    "ece": 0.17894166666666667,
+    "brier": 0.032711645416666664,
+    "lo": 0.17134375000000002,
+    "hi": 0.18644999999999998,
+    "half": 0.00755312499999998,
+    "n": 48,
+    "beats_best_trivial": true,
+    "verdict": "DISTINGUISHABLE"
+  },
+  "calibration_biased_probe": {
+    "ece": 0.3041666666666665,
+    "brier": 0.32125,
+    "half": 0.125,
+    "n": 48,
+    "beats_best_trivial": false
+  }
+}

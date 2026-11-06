@@ -1,0 +1,110 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Last-bounce marker</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#111;color:#eee;font:14px -apple-system,system-ui,sans-serif;overflow:hidden}
+#top{display:flex;gap:14px;align-items:center;padding:6px 12px;background:#1b1b1b;border-bottom:1px solid #333;height:40px}
+#prog{flex:1;color:#999}#saved{color:#999;font-size:12px}.tag{padding:1px 7px;border-radius:9px;font-size:12px;background:#333}
+button{background:#2a2a2a;color:#eee;border:1px solid #444;border-radius:6px;padding:4px 10px;cursor:pointer;font:inherit}
+#bar{height:4px;background:#333;position:absolute;left:0;right:0;top:40px}#bar i{display:block;height:100%;background:#3ddc84;width:0}
+#wrap{position:absolute;top:44px;bottom:118px;left:0;right:0;display:flex;align-items:center;justify-content:center}
+canvas{max-width:100%;max-height:100%;cursor:crosshair}
+#tl{position:absolute;bottom:82px;left:12px;width:calc(100% - 24px);height:30px;cursor:pointer}
+#info{position:absolute;bottom:0;left:0;right:0;height:80px;background:#1b1b1b;border-top:1px solid #333;padding:6px 12px;font-size:13px}
+#why{color:#999}#keys{margin-top:4px}#keys kbd{background:#333;border:1px solid #555;border-bottom-width:2px;border-radius:4px;padding:0 5px;font:12px ui-monospace,monospace;margin-right:2px}
+#keys span{margin-right:12px;white-space:nowrap}
+#toast{position:absolute;top:56px;left:50%;transform:translateX(-50%);background:#263238;border:1px solid #4dd0e1;padding:8px 14px;border-radius:8px;display:none;z-index:5}
+</style></head><body>
+<div id="top"><b>Last bounce</b><span id="pos" class="tag"></span><span id="prog"></span><span id="saved"></span><button id="prev">◀ Back</button></div>
+<div id="bar"><i></i></div>
+<div id="wrap"><canvas id="cv" width="1280" height="720"></canvas></div>
+<canvas id="tl" height="30"></canvas>
+<div id="toast"></div>
+<div id="info"><div id="why"></div><div id="keys">
+<span><kbd>Enter</kbd> accept (guess or your mark), next point</span><span><b>click</b> bounce is here, on this frame</span>
+<span><kbd>N</kbd> no bounce / ball out of view</span><span><kbd>C</kbd> clip cuts off before bounce</span><span><kbd>T</kbd> add a note</span><span><kbd>I</kbd>/<kbd>O</kbd> in / out (optional)</span>
+<span><kbd>Space</kbd> play/pause</span><span><kbd>←</kbd><kbd>→</kbd> frame (<kbd>⇧</kbd> 5)</span><span><kbd>G</kbd> jump to guess</span><span><kbd>Z</kbd> undo</span><span><kbd>B</kbd> back</span></div></div>
+<script>
+"use strict";
+const $=s=>document.querySelector(s), cv=$("#cv"), cx=cv.getContext("2d"), tl=$("#tl"), tx=tl.getContext("2d");
+const W=1280,Hh=720, SLOW=7.5;          // 30 fps footage played at 7.5 fps = quarter speed
+let ITEMS=[],A={version:1,items:{},saved_at:0},cur=0,fi=0,playing=true,frames=[],timer=null,undo=[],finTimer=null,evalState="";
+const LS="bouncemark_answers";
+const it=()=>ITEMS[cur], ans=()=>A.items[it().key];
+function toast(m,ms=2500){const t=$("#toast");t.innerHTML=m;t.style.display="block";clearTimeout(t._h);if(ms)t._h=setTimeout(()=>t.style.display="none",ms)}
+function snap(){undo.push({key:it().key,idx:cur,prev:JSON.stringify(A.items[it().key]||null)})}
+function doUndo(){const u=undo.pop();if(!u){toast("Nothing to undo");return}const v=JSON.parse(u.prev);if(v===null)delete A.items[u.key];else A.items[u.key]=v;save();go(u.idx);toast("Undone")}
+let sh=null;
+function save(){A.saved_at=Date.now();localStorage.setItem(LS,JSON.stringify(A));clearTimeout(sh);$("#saved").textContent="saving…";
+  sh=setTimeout(async()=>{try{const r=await fetch("/save",{method:"POST",body:JSON.stringify(A)});$("#saved").textContent=r.ok?"saved ✓":"save failed (kept in browser)"}catch(e){$("#saved").textContent="offline (kept in browser)"}},300);
+  progress();checkFinished()}
+const nDone=()=>ITEMS.filter(i=>A.items[i.key]&&A.items[i.key].done).length;
+function progress(){const d=nDone();$("#prog").textContent=`${d}/${ITEMS.length} points done`+(evalState?` · tracker eval: ${evalState}`:"");$("#bar i").style.width=(100*d/ITEMS.length)+"%";
+  $("#pos").textContent=`#${cur+1} · point ${it()?it().point_no:""}`}
+function checkFinished(){if(nDone()<ITEMS.length||evalState)return;let left=60;clearInterval(finTimer);
+  finTimer=setInterval(()=>{left--;toast(`All ${ITEMS.length} done. The tracker's last-bounce check runs in ${left}s, keep fixing anything (it resets the timer) · <kbd>Esc</kbd> cancels`,0);
+    if(left<=0){clearInterval(finTimer);finTimer=null;queueEval()}},1000)}
+async function queueEval(){try{const r=await (await fetch("/eval",{method:"POST",body:JSON.stringify({reason:"finished"})})).json();evalState=r.status;toast("Queued the tracker check against your bounces. Thanks!",5000)}catch(e){toast("Couldn't reach the server",4000)}progress()}
+function init(t){return {done:false,kind:null,k:null,u:null,v:null,inout:null,from:null,idx:t.idx,point_no:t.point_no,t0:t.t0,t_last:t.t_last,fps:t.fps}}
+function go(i){cur=Math.max(0,Math.min(ITEMS.length-1,i));cx.fillStyle="#000";cx.fillRect(0,0,W,Hh);const t=it();if(!A.items[t.key])A.items[t.key]=init(t);
+  frames=t.ks.map(k=>{const im=new Image();im.src=`/f/${t.idx}/${String(k).padStart(5,"0")}.jpg`;im.onload=()=>{if(t.ks[fi]===k)draw()};return im});
+  const a=ans(); playing=!a.done; fi=a.done&&a.k!=null?Math.max(0,t.ks.indexOf(a.k)):0;
+  const g=t.guess?`tracker guess: bounce at frame ${t.guess.k}`+(t.guess.p_in!=null?`, P(in) ${t.guess.p_in.toFixed(2)}`:""):"tracker found no last bounce";
+  $("#why").textContent=`Point ${t.point_no} · last contact ${t.t_last.toFixed(2)} s (${t.last_src||"sv"}) · ${g}`+(t.sv_result?` · SwingVision: ${t.sv_result}`:"")+` · status ${t.status}`;
+  clearInterval(timer);timer=setInterval(()=>{if(playing){fi=(fi+1)%t.ks.length;draw()}},1000/SLOW);progress();draw()}
+function next(){const n=ITEMS.findIndex((x,j)=>j>cur&&!(A.items[x.key]&&A.items[x.key].done));if(n>=0)go(n);else{const f=ITEMS.findIndex(x=>!(A.items[x.key]&&A.items[x.key].done));if(f>=0)go(f);else{toast("All done ✓");draw()}}}
+function label(s,x,y,c){cx.font="600 18px -apple-system,sans-serif";const w=cx.measureText(s).width;cx.fillStyle="rgba(0,0,0,.65)";cx.fillRect(x-3,y-19,w+8,25);cx.fillStyle=c;cx.fillText(s,x+1,y)}
+function ring(u,v,c,dash,r=13){cx.strokeStyle=c;cx.lineWidth=2.5;cx.setLineDash(dash?[5,4]:[]);cx.beginPath();cx.arc(u,v,r,0,7);cx.stroke();cx.setLineDash([])}
+function draw(){const t=it();if(!t)return;const im=frames[fi];if(!im||!im.complete||!im.naturalWidth)return;cx.drawImage(im,0,0,W,Hh);const a=ans(),k=t.ks[fi];
+  // tracker ball trail up to this frame
+  for(let j=0;j<=fi&&j<t.ball.length;j++){const p=t.ball[j];if(p&&p[0]!=null){cx.fillStyle=j===fi?"rgba(255,225,77,.95)":"rgba(255,225,77,.35)";cx.beginPath();cx.arc(p[0],p[1],j===fi?3.5:2,0,7);cx.fill()}}
+  if(t.sv_uv){cx.strokeStyle="rgba(255,90,200,.7)";cx.lineWidth=1.5;const [u,v]=t.sv_uv;cx.beginPath();cx.moveTo(u,v-9);cx.lineTo(u+9,v);cx.lineTo(u,v+9);cx.lineTo(u-9,v);cx.closePath();cx.stroke();
+    cx.font="12px sans-serif";cx.fillStyle="rgba(255,90,200,.9)";cx.fillText("SV",u+11,v+4)}
+  if(t.guess&&a.kind!=="bounce"){const on=Math.abs(k-t.guess.k)<=0;ring(t.guess.u,t.guess.v,on?"#38d9ff":"rgba(56,217,255,.4)",true,on?14:9)}
+  if(a.kind==="bounce"){const on=k===a.k;ring(a.u,a.v,on?"#3ddc84":"rgba(61,220,132,.45)",false,on?14:9)}
+  let s=`frame ${k}`+(k<t.k_last?" (before last contact)":` · +${((k-t.k_last)/30).toFixed(2)} s after last contact`);
+  s+= playing?" · ▶ ¼ speed":" · ❚❚";
+  if(a.done) s+= a.kind==="none"?" · ✓ no bounce":" · ✓ marked";
+  else if(a.kind==="bounce") s+=" · your mark (Enter accepts)";
+  else if(t.guess) s+=" · cyan ring = tracker guess (Enter accepts)";
+  else s+=" · no guess: pause on the bounce and click it, or N";
+  if(a.inout) s+=` · ${a.inout.toUpperCase()}`;
+  if(a.cutoff) s+=" · ✂ cut off";
+  if(a.note) s+=` · 📝 ${a.note.slice(0,40)}`;
+  label(s,10,Hh-12,"#fff");drawTL()}
+function drawTL(){const t=it(),a=ans();tl.width=tl.clientWidth;const w=tl.width,n=t.ks.length,x=j=>6+(w-12)*j/(n-1);
+  tx.fillStyle="#222";tx.fillRect(0,0,w,30);tx.fillStyle="#555";tx.fillRect(6,13,w-12,4);
+  const jl=t.ks.indexOf(Math.round(t.k_last));if(jl>=0){tx.fillStyle="#ffe14d";tx.fillRect(x(jl)-1,4,3,22)}
+  if(t.guess){const j=t.ks.indexOf(t.guess.k);if(j>=0){tx.strokeStyle="#38d9ff";tx.lineWidth=2;tx.strokeRect(x(j)-4,6,8,18)}}
+  if(a.kind==="bounce"){const j=t.ks.indexOf(a.k);if(j>=0){tx.fillStyle="#3ddc84";tx.fillRect(x(j)-3,6,7,18)}}
+  tx.fillStyle="#fff";tx.fillRect(x(fi)-1,2,2,26)}
+tl.addEventListener("mousedown",e=>{const r=tl.getBoundingClientRect(),n=it().ks.length;playing=false;fi=Math.max(0,Math.min(n-1,Math.round((e.clientX-r.left-6)/(r.width-12)*(n-1))));draw()});
+cv.addEventListener("mousedown",e=>{const r=cv.getBoundingClientRect(),u=(e.clientX-r.left)*W/r.width,v=(e.clientY-r.top)*Hh/r.height;
+  if(playing){playing=false;draw();toast("Paused. Step with ← → to the bounce frame, then click it");return}
+  snap();const a=ans();Object.assign(a,{kind:"bounce",k:it().ks[fi],u:Math.round(u*10)/10,v:Math.round(v*10)/10,from:"click",done:false});save();draw()});
+document.addEventListener("keydown",e=>{const t=it();if(!t)return;const k=e.key,a=ans();
+  if((e.metaKey||e.ctrlKey)&&k.toLowerCase()==="z"){e.preventDefault();doUndo();return}
+  if(e.metaKey||e.ctrlKey)return;
+  if(k==="Escape"&&finTimer){clearInterval(finTimer);finTimer=null;$("#toast").style.display="none";toast("Cancelled. It'll ask again next time you finish an edit.");return}
+  if(k===" "){e.preventDefault();playing=!playing;draw()}
+  else if(k==="ArrowRight"){playing=false;fi=Math.min(t.ks.length-1,fi+(e.shiftKey?5:1));draw()}
+  else if(k==="ArrowLeft"){playing=false;fi=Math.max(0,fi-(e.shiftKey?5:1));draw()}
+  else if(k==="g"||k==="G"){if(t.guess){playing=false;fi=Math.max(0,t.ks.indexOf(t.guess.k));draw()}}
+  else if(k==="Enter"){e.preventDefault();
+    if(a.kind==="bounce"||a.kind==="none"){snap();a.done=true;save();next();return}
+    if(t.guess){snap();Object.assign(a,{kind:"bounce",k:t.guess.k,u:t.guess.u,v:t.guess.v,from:"guess",done:true});save();next();return}
+    toast("No guess for this point: click the bounce, or press N")}
+  else if(k==="n"||k==="N"){snap();Object.assign(a,{kind:"none",k:null,u:null,v:null,from:"key",done:true});save();next()}
+  else if(k==="i"||k==="I"||k==="o"||k==="O"){snap();const w=(k.toLowerCase()==="i")?"in":"out";a.inout=a.inout===w?null:w;save();draw()}
+  else if(k==="c"||k==="C"){snap();a.cutoff=!a.cutoff;if(a.cutoff){if(a.kind!=="bounce")Object.assign(a,{kind:"none",k:null,u:null,v:null,from:"key"});a.done=true;save();toast("Marked: clip cuts off before the bounce (I/O still works)");draw()}else{save();draw()}}
+  else if(k==="t"||k==="T"){e.preventDefault();playing=false;const n=prompt("Note for point "+t.point_no+":",a.note||"");if(n!==null){snap();a.note=n.trim()||null;save();draw();toast(a.note?"Note saved":"Note cleared")}}
+  else if(k==="b"||k==="B"){go(cur-1)}
+  else if(k==="z"||k==="Z"){doUndo()}});
+$("#prev").onclick=()=>go(cur-1);window.addEventListener("resize",draw);
+(async()=>{ITEMS=(await (await fetch("/items.json")).json()).items;let srv={items:{}};try{srv=await (await fetch("/answers")).json()}catch(e){}
+  let loc=null;try{loc=JSON.parse(localStorage.getItem(LS)||"null")}catch(e){}
+  A=(loc&&loc.saved_at>(srv.saved_at||0))?loc:srv;A.items=A.items||{};A.version=1;
+  // every answer carries the clip time base so the tracker eval can use it directly
+  A.note="k = frame in the local clip (t = t0 + k/fps), u,v in analysis pixels. kind: bounce | none. Do not share private footage.";
+  try{const s=await (await fetch("/status")).json();if(s.queued)evalState="queued"}catch(e){}
+  const f=ITEMS.findIndex(x=>!(A.items[x.key]&&A.items[x.key].done));go(f<0?0:f);if(f>0)toast(`Welcome back: picking up at point ${f+1}`)})();
+</script></body></html>

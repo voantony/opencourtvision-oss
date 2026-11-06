@@ -1,0 +1,9 @@
+# Core (detection, scoring, story, render)
+numpy>=1.24
+scipy>=1.10
+# Reel / ball tracking
+opencv-python>=4.8
+# Speech-to-text for score callouts (Apple Silicon only; used with --stt)
+mlx-whisper>=0.4; sys_platform == "darwin" and platform_machine == "arm64"
+# Optional: TrackNet ball detector for ocv-reel --tracknet (install manually)
+# torch>=2.2

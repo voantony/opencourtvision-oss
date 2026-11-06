@@ -1,0 +1,421 @@
+{
+  "$schema": "vamos.style_preset.v1",
+  "id": "vamos_clean_v1",
+  "display_name": "Vamos Clean",
+  "version": "1.0.0",
+  "replaces_placeholder": "Vamos Clean",
+  "owner": "media_director",
+  "created": "2026-10-19",
+  "spec_md": "spec.md",
+  "description": "Night-session broadcast highlight preset: restraint, whole points, verified captions, gentle grade, hard cuts.",
+  "hard_constraints": {
+    "quality_over_quantity": true,
+    "slow_mo_max_per_reel": 2,
+    "slow_mo_zero_ok": true,
+    "caption_requires_whole_event": true,
+    "reel_clips_whole_points_only": true,
+    "pre_roll_s_min": 3.0,
+    "pre_roll_s_aim": 4.0,
+    "post_roll_s_min": 2.0,
+    "post_roll_s_aim": 2.5,
+    "nine_sixteen_letterbox_forbidden": true,
+    "nine_sixteen_wide_mode_forbidden": true,
+    "camera_code_owned_by": "engineer",
+    "no_face_biometric_id": true,
+    "no_real_person_likeness_in_generated_assets": true
+  },
+  "palette": {
+    "night": "#0B0F14",
+    "graphite": "#161C24",
+    "border": "#2A3340",
+    "chalk": "#F2F4F7",
+    "mist": "#8E99AB",
+    "volt": "#C8F43C",
+    "sol": "#FFB627",
+    "fiesta": "#FF4D6D",
+    "court_blue": "#2F7BFF",
+    "bug_fill_opacity": 0.9,
+    "intro_band_opacity": 0.8
+  },
+  "typography": {
+    "licence": "OFL / Google Fonts only",
+    "families": {
+      "captions": {
+        "family": "Barlow Condensed",
+        "weight": 900,
+        "style": "italic",
+        "file_hint": "BarlowCondensed-BlackItalic.ttf",
+        "case": "upper",
+        "tracking_em": 0.02
+      },
+      "names": {
+        "family": "Barlow Condensed",
+        "weight": 600,
+        "file_hint": "BarlowCondensed-SemiBold.ttf"
+      },
+      "headlines": {
+        "family": "Barlow Condensed",
+        "weight": 700,
+        "file_hint": "BarlowCondensed-Bold.ttf"
+      },
+      "cheer_wordmark": {
+        "family": "Archivo Black",
+        "weight": 400,
+        "file_hint": "ArchivoBlack-Regular.ttf",
+        "use": "¡VAMOS! moments only"
+      },
+      "numbers": {
+        "family": "JetBrains Mono",
+        "weight_live": 700,
+        "weight_finished": 500,
+        "file_hint": "JetBrainsMono-VariableFont_wght.ttf",
+        "tabular": true
+      },
+      "ui": {
+        "family": "Inter",
+        "weight": 600,
+        "file_hint": "Inter-VariableFont_opsz,wght.ttf"
+      }
+    },
+    "sizes_px": {
+      "1080x1920": {
+        "caption": 56,
+        "bug_name": 28,
+        "bug_point": 26,
+        "bug_finished_game": 22,
+        "intro_secondary": 28,
+        "intro_teams": 40,
+        "result_winners": 48,
+        "result_score": 52,
+        "game_chip": 22
+      },
+      "1920x1080": {
+        "caption": 48,
+        "bug_name": 22,
+        "bug_point": 20,
+        "bug_finished_game": 18,
+        "intro_secondary": 24,
+        "intro_teams": 36,
+        "result_winners": 56,
+        "result_score": 64,
+        "game_chip": 18
+      },
+      "3840x2160": {
+        "caption": 96,
+        "bug_name": 44,
+        "bug_point": 40,
+        "bug_finished_game": 36,
+        "intro_secondary": 48,
+        "intro_teams": 72,
+        "result_winners": 112,
+        "result_score": 128,
+        "game_chip": 36
+      }
+    }
+  },
+  "grade": {
+    "lut_file": "vamos_grade.cube",
+    "lut_size": 33,
+    "lut_interp": "tetrahedral",
+    "apply_after": "reframe",
+    "apply_before": "overlays",
+    "numeric": {
+      "exposure_stops": 0.08,
+      "shadow_lift": 0.014,
+      "shadow_lift_luma_falloff": 0.35,
+      "contrast": 1.08,
+      "contrast_pivot": 0.45,
+      "highlight_rolloff_start": 0.85,
+      "saturation": 1.06,
+      "midtone_warmth_r": 0.008,
+      "midtone_warmth_b": -0.004
+    },
+    "ffmpeg_approx": "eq=contrast=1.08:brightness=0.02:saturation=1.06,colorbalance=rs=0.02:gs=0:bs=-0.01:rm=0.01:bm=-0.008,curves=master='0/0.02 0.45/0.45 0.85/0.82 1/0.94'",
+    "forbidden": [
+      "vignette",
+      "grain",
+      "teal_orange_crush",
+      "halation",
+      "anamorphic_flare"
+    ],
+    "enabled": true,
+    "note": "normalisation only (spec §4); set enabled=false or --no-grade to skip"
+  },
+  "score_bug": {
+    "layout": "compact_server_first_two_row",
+    "user_team_row": "top",
+    "serve_indicator": "volt_dot",
+    "live_point_cell": "volt_fill_night_text",
+    "finished_set_games_color": "mist",
+    "current_set_games_color": "chalk",
+    "max_width_frac": {
+      "9x16": 0.7,
+      "16x9": 0.26
+    },
+    "height_frac": {
+      "9x16": 0.054,
+      "16x9": 0.065
+    },
+    "position": {
+      "9x16_1080x1920": {
+        "x_align": "center",
+        "y_top_px": 320
+      },
+      "16x9_1920x1080": {
+        "x_px_min": 96,
+        "y_px_min": 54
+      }
+    },
+    "motion": {
+      "fade_in_ms": 180,
+      "fade_in_ease": "ease_out_cubic",
+      "fade_out_ms": 150,
+      "ball_conflict_fade_ms": 150,
+      "point_flip_ms": 120,
+      "game_pulse_ms": 400,
+      "update_at": "t_dec + 0.5s",
+      "clear_before_cut": true
+    },
+    "visibility": {
+      "full_match": "always_if_verified",
+      "highlights_4k": "always_if_verified",
+      "story_reel": "on_score_change_or_stakes_caption"
+    }
+  },
+  "captions": {
+    "stakes_allowlist": [
+      "BREAK POINT",
+      "SET POINT",
+      "MATCH POINT",
+      "MATCH POINT SAVED",
+      "PUNTO DE ORO",
+      "STAR POINT",
+      "GAME POINT"
+    ],
+    "hype_forbidden": true,
+    "emoji_forbidden": true,
+    "requires_frame_verification": true,
+    "requires_whole_event_clip": true,
+    "duration_s": {
+      "min": 0.8,
+      "max": 1.2
+    },
+    "max_stakes_per_reel": 3,
+    "max_per_8s": 1,
+    "motion": {
+      "in_ms": 160,
+      "in_rise_px": 2,
+      "out_ms": 150,
+      "underline": {
+        "color": "volt",
+        "height_px_1080": 3
+      }
+    },
+    "zone": {
+      "9x16": {
+        "y_frac_min": 0.6,
+        "y_frac_max": 0.72,
+        "center_x_bias_px": -90
+      },
+      "16x9": {
+        "y_frac_min": 0.72,
+        "y_frac_max": 0.85
+      }
+    }
+  },
+  "transitions": {
+    "default": "hard_cut",
+    "audio_crossfade_s": 0.2,
+    "dip_to_black": {
+      "allowed": true,
+      "max_per_reel": 2,
+      "when": "between_whole_points_and_music_on_and_game_score_jump",
+      "down_ms": 80,
+      "up_ms": 80
+    },
+    "dissolve": {
+      "allowed": "loop_point_only",
+      "max_ms": 300
+    },
+    "forbidden": [
+      "whip",
+      "flash",
+      "zoom_blur",
+      "glitch",
+      "wipe",
+      "shake"
+    ]
+  },
+  "slow_mo": {
+    "max_per_reel": 2,
+    "zero_ok": true,
+    "max_factor": 0.45,
+    "ramp_ms": 280,
+    "ramp_curve": "cosine",
+    "hold_ms_max": 700,
+    "requires_verified_exceptional_shot": true,
+    "interpolation": "optical_flow_if_src_fps_ge_50_else_blend",
+    "never_for_music_sync": true,
+    "no_added_whoosh_default": true
+  },
+  "cut_sync": {
+    "primary": "action",
+    "music_beat_snap_window_ms": {
+      "min": 0,
+      "max": 80
+    },
+    "outgoing_clip_may_only_lengthen": true,
+    "never_retime_point_for_beat": true,
+    "never_move_end_card_for_music": true,
+    "hit_boost_db_max": 2.0,
+    "hit_boost_hz": 3000
+  },
+  "audio": {
+    "default": "court_only",
+    "music_allowed_on": [
+      "story_reel",
+      "per_player_reel",
+      "bloopers",
+      "recap"
+    ],
+    "music_forbidden_on": [
+      "full_match",
+      "highlights_4k",
+      "top_3",
+      "best_point_today"
+    ],
+    "prefer_platform_sound_at_share": true,
+    "music_bed_lu_under_target": -6,
+    "duck_db": -11,
+    "duck_attack_ms": 30,
+    "duck_release_ms": 250,
+    "loudness_lufs": {
+      "9x16": -14,
+      "16x9": -16
+    },
+    "true_peak_dbtp_max": -1.0,
+    "no_synthetic_hit_sfx": true,
+    "no_added_crowd": true,
+    "music_default": "platform_sound_picker_at_share",
+    "bake_music": false,
+    "baked_music_catalogues": [],
+    "note": "No Epidemic / Artlist / other tracks are baked into exports; the user picks a platform sound when sharing."
+  },
+  "intro": {
+    "max_s": 1.5,
+    "over_black": false,
+    "band_opacity": 0.8,
+    "band_y_frac_9x16": 0.7,
+    "lines": [
+      "sport_format_mist",
+      "venue_date_mist",
+      "teams_chalk_bold_user_first"
+    ]
+  },
+  "outro": {
+    "duration_s": {
+      "min": 2.0,
+      "max": 3.0
+    },
+    "after_final_point_outcome": true,
+    "winner_first": true,
+    "volt_underline_winners": true,
+    "score_mono": true,
+    "logo": {
+      "mark": "c_bang_horizontal",
+      "max_width_frac": {
+        "16x9": 0.12,
+        "9x16": 0.28
+      },
+      "opacity": {
+        "16x9": 0.6,
+        "9x16": 0.9
+      },
+      "placement": "outro_only",
+      "never_over_play": true,
+      "never_on_junior": true
+    },
+    "watermark_during_play": false,
+    "loop_match_hook_s": 0.3
+  },
+  "safe_zones": {
+    "9x16_1080x1920": {
+      "universal": {
+        "top": 288,
+        "bottom": 672,
+        "left": 120,
+        "right": 300
+      },
+      "usable_box": {
+        "x0": 120,
+        "y0": 288,
+        "x1": 780,
+        "y1": 1248
+      },
+      "compose_bias_x_px": -90,
+      "platforms": {
+        "tiktok": {
+          "top": 240,
+          "bottom": 660,
+          "left": 120,
+          "right": 300
+        },
+        "instagram_reels": {
+          "top": 269,
+          "bottom": 672,
+          "left": 65,
+          "right": 65
+        },
+        "youtube_shorts": {
+          "top": 288,
+          "bottom": 672,
+          "left": 48,
+          "right": 192
+        }
+      }
+    },
+    "16x9_1920x1080": {
+      "title_safe_px": 96,
+      "bottom_min_clear_px": 54
+    },
+    "16x9_3840x2160": {
+      "title_safe_px": 192,
+      "bottom_min_clear_px": 108
+    }
+  },
+  "effects_budget_per_story_reel": {
+    "slow_mo": {
+      "min": 0,
+      "max": 2
+    },
+    "punch_ins": {
+      "max": 3
+    },
+    "stakes_captions": {
+      "max": 3
+    },
+    "dip_to_black": {
+      "max": 2
+    }
+  },
+  "camera_style_intent": {
+    "note": "Framing code is Engineer's. This block is style intent for pass/fail only.",
+    "zoom": "subtle_slow_no_pumping",
+    "pans": "smooth",
+    "reference_caps_see": "mvp_edit_style.md §2.4 and standing camera checks"
+  },
+  "assets": {
+    "lut": "vamos_grade.cube",
+    "logo_c": "",
+    "fonts_dir": "fonts/",
+    "fonts": {
+      "captions": "fonts/BarlowCondensed-BlackItalic.ttf",
+      "names": "fonts/BarlowCondensed-SemiBold.ttf",
+      "headlines": "fonts/BarlowCondensed-Bold.ttf",
+      "cheer_wordmark": "fonts/ArchivoBlack-Regular.ttf",
+      "numbers_live": "fonts/JetBrainsMono-Bold.ttf",
+      "numbers_finished": "fonts/JetBrainsMono-Medium.ttf"
+    }
+  },
+  "source": "Media Director style pack vamos_highlight_v1 (19 Oct 2026); spec: docs/style/vamos_clean_v1.md"
+}

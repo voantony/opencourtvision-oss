@@ -1,0 +1,335 @@
+{
+ "video": "<synthetic>",
+ "note": "corrupted copy of labels/synthetic_doubles.json",
+ "events": [
+  {
+   "type": "contact",
+   "t": 5.022,
+   "player": "P3",
+   "confidence": 0.384,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false,
+   "label": {
+    "position": "far_ad",
+    "shot_type": "serve",
+    "direction": "wide",
+    "formation": "conventional",
+    "outcome": "in",
+    "hand": "right"
+   }
+  },
+  {
+   "type": "bounce",
+   "t": 5.551,
+   "player": null,
+   "confidence": 0.829,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false
+  },
+  {
+   "type": "contact",
+   "t": 6.326,
+   "player": "P2",
+   "confidence": 0.49,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false,
+   "label": {
+    "position": "near_deuce",
+    "side": "backhand",
+    "shot_type": "return",
+    "direction": "inside_out",
+    "formation": "non_serve",
+    "outcome": "in",
+    "hand": "left"
+   }
+  },
+  {
+   "type": "bounce",
+   "t": 6.848,
+   "player": null,
+   "confidence": 0.903,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false
+  },
+  {
+   "type": "bounce",
+   "t": 8.33,
+   "player": null,
+   "confidence": 0.808,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false
+  },
+  {
+   "type": "point_end",
+   "t": 8.914,
+   "player": null,
+   "confidence": 0.724,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false
+  },
+  {
+   "type": "contact",
+   "t": 29.703,
+   "player": "P4",
+   "confidence": 0.378,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false,
+   "label": {
+    "position": "far_deuce",
+    "shot_type": "serve",
+    "direction": "wide",
+    "formation": "australian",
+    "outcome": "win",
+    "hand": "right"
+   }
+  },
+  {
+   "type": "bounce",
+   "t": 30.283,
+   "player": null,
+   "confidence": 0.862,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false
+  },
+  {
+   "type": "point_end",
+   "t": 30.755,
+   "player": null,
+   "confidence": 0.78,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false
+  },
+  {
+   "type": "contact",
+   "t": 51.521,
+   "player": "P2",
+   "confidence": 0.727,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false,
+   "label": {
+    "position": "near_deuce",
+    "shot_type": "serve",
+    "direction": "body",
+    "formation": "conventional",
+    "outcome": "in",
+    "hand": "left"
+   }
+  },
+  {
+   "type": "bounce",
+   "t": 52.195,
+   "player": null,
+   "confidence": 0.936,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false
+  },
+  {
+   "type": "contact",
+   "t": 52.527,
+   "player": "P3",
+   "confidence": 0.843,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false,
+   "label": {
+    "position": "far_deuce",
+    "side": "backhand",
+    "shot_type": "return",
+    "direction": "inside_out",
+    "formation": "non_serve",
+    "outcome": "error",
+    "hand": "right"
+   }
+  },
+  {
+   "type": "bounce",
+   "t": 53.213,
+   "player": null,
+   "confidence": 0.762,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false
+  },
+  {
+   "type": "point_end",
+   "t": 54.084,
+   "player": null,
+   "confidence": 0.819,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false
+  },
+  {
+   "type": "contact",
+   "t": 72.087,
+   "player": "P2",
+   "confidence": 0.95,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false,
+   "label": {
+    "position": "near_deuce",
+    "shot_type": "serve",
+    "direction": "wide",
+    "formation": "i_formation",
+    "outcome": "in",
+    "hand": "left"
+   }
+  },
+  {
+   "type": "bounce",
+   "t": 72.806,
+   "player": null,
+   "confidence": 0.757,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false
+  },
+  {
+   "type": "contact",
+   "t": 73.605,
+   "player": "P4",
+   "confidence": 0.526,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false,
+   "label": {
+    "position": "far_ad",
+    "side": "forehand",
+    "shot_type": "return",
+    "direction": "inside_out",
+    "formation": "non_serve",
+    "outcome": "in",
+    "hand": "right"
+   }
+  },
+  {
+   "type": "bounce",
+   "t": 74.29,
+   "player": null,
+   "confidence": 0.722,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false
+  },
+  {
+   "type": "contact",
+   "t": 74.684,
+   "player": "P2",
+   "confidence": 0.71,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false,
+   "label": {
+    "position": "near_deuce",
+    "side": "backhand",
+    "shot_type": "lob",
+    "direction": "cross_court",
+    "formation": "non_serve",
+    "outcome": "in",
+    "hand": "left"
+   }
+  },
+  {
+   "type": "contact",
+   "t": 75.119,
+   "player": "P2",
+   "confidence": 0.586,
+   "evidence": [
+    "audio: synthetic"
+   ],
+   "verified": false
+  },
+  {
+   "type": "bounce",
+   "t": 75.558,
+   "player": null,
+   "confidence": 0.742,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false
+  },
+  {
+   "type": "contact",
+   "t": 75.733,
+   "player": "P4",
+   "confidence": 0.956,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false,
+   "label": {
+    "position": "far_ad",
+    "side": "backhand",
+    "shot_type": "smash",
+    "direction": "down_the_line",
+    "formation": "non_serve",
+    "outcome": "error",
+    "hand": "right"
+   }
+  },
+  {
+   "type": "bounce",
+   "t": 76.301,
+   "player": null,
+   "confidence": 0.881,
+   "evidence": [
+    "audio: synthetic",
+    "pose: synthetic"
+   ],
+   "verified": false
+  }
+ ]
+}

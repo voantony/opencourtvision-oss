@@ -1,0 +1,333 @@
+{
+ "video": "<synthetic>",
+ "fps": 30,
+ "note": "synthetic, rule-consistent; not a real match",
+ "events": [
+  {
+   "type": "contact",
+   "t": 5.0,
+   "player": "P3",
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true,
+   "label": {
+    "position": "far_ad",
+    "shot_type": "serve",
+    "direction": "wide",
+    "formation": "conventional",
+    "outcome": "in",
+    "hand": "right"
+   }
+  },
+  {
+   "type": "bounce",
+   "t": 5.529,
+   "player": null,
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true
+  },
+  {
+   "type": "contact",
+   "t": 6.322,
+   "player": "P2",
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true,
+   "label": {
+    "position": "near_deuce",
+    "side": "forehand",
+    "shot_type": "return",
+    "direction": "inside_in",
+    "formation": "non_serve",
+    "outcome": "in",
+    "hand": "left"
+   }
+  },
+  {
+   "type": "bounce",
+   "t": 6.856,
+   "player": null,
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true
+  },
+  {
+   "type": "contact",
+   "t": 7.572,
+   "player": "P3",
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true,
+   "label": {
+    "position": "far_deuce",
+    "side": "backhand",
+    "shot_type": "swing",
+    "direction": "inside_in",
+    "formation": "non_serve",
+    "outcome": "win",
+    "hand": "right"
+   }
+  },
+  {
+   "type": "bounce",
+   "t": 8.325,
+   "player": null,
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true
+  },
+  {
+   "type": "point_end",
+   "t": 8.922,
+   "player": null,
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true
+  },
+  {
+   "type": "contact",
+   "t": 29.693,
+   "player": "P4",
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true,
+   "label": {
+    "position": "far_deuce",
+    "shot_type": "serve",
+    "direction": "T",
+    "formation": "australian",
+    "outcome": "win",
+    "hand": "right"
+   }
+  },
+  {
+   "type": "bounce",
+   "t": 30.309,
+   "player": null,
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true
+  },
+  {
+   "type": "point_end",
+   "t": 30.78,
+   "player": null,
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true
+  },
+  {
+   "type": "contact",
+   "t": 51.489,
+   "player": "P2",
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true,
+   "label": {
+    "position": "near_deuce",
+    "shot_type": "serve",
+    "direction": "body",
+    "formation": "conventional",
+    "outcome": "in",
+    "hand": "left"
+   }
+  },
+  {
+   "type": "bounce",
+   "t": 52.208,
+   "player": null,
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true
+  },
+  {
+   "type": "contact",
+   "t": 52.527,
+   "player": "P3",
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true,
+   "label": {
+    "position": "far_deuce",
+    "side": "backhand",
+    "shot_type": "return",
+    "direction": "inside_out",
+    "formation": "non_serve",
+    "outcome": "error",
+    "hand": "right"
+   }
+  },
+  {
+   "type": "bounce",
+   "t": 53.213,
+   "player": null,
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true
+  },
+  {
+   "type": "point_end",
+   "t": 54.081,
+   "player": null,
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true
+  },
+  {
+   "type": "contact",
+   "t": 72.078,
+   "player": "P2",
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true,
+   "label": {
+    "position": "near_deuce",
+    "shot_type": "serve",
+    "direction": "wide",
+    "formation": "i_formation",
+    "outcome": "in",
+    "hand": "left"
+   }
+  },
+  {
+   "type": "bounce",
+   "t": 72.788,
+   "player": null,
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true
+  },
+  {
+   "type": "contact",
+   "t": 73.603,
+   "player": "P4",
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true,
+   "label": {
+    "position": "far_ad",
+    "side": "forehand",
+    "shot_type": "return",
+    "direction": "inside_in",
+    "formation": "non_serve",
+    "outcome": "in",
+    "hand": "right"
+   }
+  },
+  {
+   "type": "bounce",
+   "t": 74.308,
+   "player": null,
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true
+  },
+  {
+   "type": "contact",
+   "t": 74.702,
+   "player": "P2",
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true,
+   "label": {
+    "position": "near_deuce",
+    "side": "backhand",
+    "shot_type": "lob",
+    "direction": "cross_court",
+    "formation": "non_serve",
+    "outcome": "in",
+    "hand": "left"
+   }
+  },
+  {
+   "type": "bounce",
+   "t": 75.587,
+   "player": null,
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true
+  },
+  {
+   "type": "contact",
+   "t": 75.749,
+   "player": "P4",
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true,
+   "label": {
+    "position": "far_ad",
+    "side": "backhand",
+    "shot_type": "smash",
+    "direction": "down_the_line",
+    "formation": "non_serve",
+    "outcome": "error",
+    "hand": "right"
+   }
+  },
+  {
+   "type": "bounce",
+   "t": 76.276,
+   "player": null,
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true
+  },
+  {
+   "type": "point_end",
+   "t": 76.805,
+   "player": null,
+   "confidence": 1.0,
+   "evidence": [
+    "truth: synthetic"
+   ],
+   "verified": true
+  }
+ ]
+}

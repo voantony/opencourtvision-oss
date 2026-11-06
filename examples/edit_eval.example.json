@@ -1,0 +1,23 @@
+{
+ "sport": "padel",
+ "labels": {
+  "points": [
+   {"id": "p1", "serve_contact": 612.40, "motion_start": 611.20, "t_dec": 621.90, "t_dec_tier": "T1"},
+   {"id": "p2", "serve_contact": 648.10, "motion_start": 646.95, "t_dec": 655.30, "t_dec_tier": "T2"},
+   {"id": "p3", "serve_contact": 690.75, "motion_start": 689.60, "t_dec": 711.05, "t_dec_tier": "T1"}
+  ],
+  "warmup": [[0.0, 590.0]]
+ },
+ "outputs": {
+  "full_cut": [{"start": 609.40, "end": 623.50}, {"start": 645.20, "end": 656.90}, {"start": 687.80, "end": 712.60}],
+  "reel_beats": [{"start": 689.60, "end": 711.85, "point_id": "p3"}],
+  "other_clips": [{"start": 687.80, "end": 712.60, "output": "top3"}]
+ },
+ "metrics": {
+  "captions_total": 2, "captions_wrong": 0, "caption_precision_wide": 0.96, "bug_wrong_scores": 0,
+  "jerk_p95_px": 0.84, "jerk_baseline_px": 2.0,
+  "reel_dead_time_max_s": 0.7, "full_cut_gap_dead_s": 0.0,
+  "slowmo_max": 1, "punch_in_max": 1, "captions_per_8s_max": 1,
+  "best_point_today_s": 455, "consent_violations": 0
+ }
+}

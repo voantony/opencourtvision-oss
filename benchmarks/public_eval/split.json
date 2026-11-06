@@ -1,0 +1,5 @@
+{
+  "tune": "synth_tune",
+  "report": "synth_report",
+  "note": "Frozen roles for the public synthetic bundles. Do not retune a threshold on synth_report and then quote it as held-out. Real CC bundles, once checksummed in clips_manifest.json, must be assigned a role in this file before a number is claimed."
+}

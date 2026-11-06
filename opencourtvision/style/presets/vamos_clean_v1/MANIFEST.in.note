@@ -1,0 +1,1 @@
+Preset assets (preset.json, LUT, fonts, logo) ship with the wheel via setuptools package-data.

@@ -1,0 +1,79 @@
+# Video / audio / images (never commit footage)
+*.mp4
+*.MP4
+*.mov
+*.MOV
+*.m4v
+*.mkv
+*.avi
+*.wav
+*.mp3
+*.m4a
+*.aac
+*.flac
+*.jpg
+*.jpeg
+*.png
+!docs/**/*.png
+
+# Pipeline caches and outputs
+work/
+exports/
+source/
+segs/
+*.npz
+keyframes.txt
+rallies.json
+stt_cache.json
+segments.csv
+score_timeline.csv
+story.json
+swingcut_report.json
+ball_stats.json
+cmd_*.txt
+concat.txt
+*.log
+benchmarks/data/
+
+# Models / weights (downloaded at runtime into $OCV_CACHE, never committed)
+models/
+*.zip
+*.npy
+*.ckpt
+*.tar
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.bin
+*.gguf
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv*/
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+
+# third-party match exports (never commit real data)
+*.xlsx
+
+# real ball labels and court calibrations of private matches (keep in your work dir)
+labels/ball/*.csv
+labels/ball/*_sheets/
+calib/
+_sample_work/
+apps/Vamos/.build/
+*.xcodeproj/xcuserdata/
+
+# Private match labels never go in git (tests build synthetic labels in tests/synth_labels.py)
+tests/fixtures/point_labels_*.json
+*.labels.json

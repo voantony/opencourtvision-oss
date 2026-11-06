@@ -1,0 +1,76 @@
+{
+  "note": "Release assets are downloaded into a cache and checksum-checked. They are not git objects. Raw footage, label files and user exports stay out. Player-ID and pose weights are excluded from v1 pending Legal. Entries with hosted=false have no URL yet; the script will not invent one.",
+  "assets": [
+    {
+      "id": "tracknetv3",
+      "role": "ball",
+      "files": ["TrackNet_best.pt", "InpaintNet_best.pt"],
+      "hosted": true,
+      "how": "ocv-fetch-weights tracknetv3 (SHA-256 in opencourtvision/ball/tracknet3.py)",
+      "source": "github.com/qaz812345/TrackNetV3 Google Drive id 1CfzE87a0f6LhBp0kniSl1-89zaLCZ8cA",
+      "licence": "MIT text in the upstream repo names the checkpoints; training-data licence is not stated in this repo",
+      "training_data": "Upstream describes a badminton shuttlecock set. This repo does not show Antony's matches or other users' footage in these files.",
+      "includes_other_users": false,
+      "consent": "not applicable (public upstream checkpoint, not a Vamos user export)"
+    },
+    {
+      "id": "ball-own-heatnet",
+      "role": "ball",
+      "files": [],
+      "hosted": false,
+      "source": "training scripts under tools/ball_tracker and tools/ball_track_v2 refer to local private clips",
+      "licence": "project code is AGPL-3.0-only; the weight file is not in git and has no published checksum",
+      "training_data": "The scripts name Antony's private match clips. Planned as a release asset only after he confirms a host URL and a checksum. Not included until then.",
+      "includes_other_users": false,
+      "consent": "no other-user footage is described for this net"
+    },
+    {
+      "id": "court",
+      "role": "court",
+      "files": [],
+      "hosted": false,
+      "training_data": "No court weight file is in the repository. Court fitting in tree is classical geometry plus optional manual points.",
+      "includes_other_users": false,
+      "consent": "unknown; nothing to ship"
+    },
+    {
+      "id": "scoring",
+      "role": "scoring",
+      "files": [],
+      "hosted": false,
+      "training_data": "The point-winner decoder is rules code, not a weight file. Per-match heads in opencourtvision/players/learned.py are fit on the user's own session and are not release assets.",
+      "includes_other_users": false,
+      "consent": "on-device per match; not pooled"
+    }
+  ],
+  "excluded_v1_pending_legal": [
+    {
+      "id": "osnet_x1_0_msmt17",
+      "role": "player-id",
+      "why": "Player-ID weights are out of v1 pending Legal. MSMT17 is a research dataset of other people, not Vamos users. Commercial terms of those weights are unclear.",
+      "includes_other_users": false,
+      "consent": "MSMT17 terms are research-only as recorded in THIRD_PARTY_NOTICES / player docs. Not a Vamos share opt-in."
+    },
+    {
+      "id": "yolo11s-pose",
+      "role": "pose",
+      "why": "Pose weights are out of v1 pending Legal. Ultralytics ships YOLO under AGPL-3.0. Their docs, beyond the licence text, treat weights trained with their code as AGPL. The code import stays; the weight file is not a release asset.",
+      "includes_other_users": "unknown",
+      "consent": "not stated in this repo"
+    },
+    {
+      "id": "mediapipe-pose-landmarker",
+      "role": "pose",
+      "why": "Pose models are out of v1 pending Legal.",
+      "includes_other_users": false,
+      "consent": "Apache-2.0 model card; not a Vamos user export"
+    },
+    {
+      "id": "rfdetr-coco",
+      "role": "player-id",
+      "why": "Player detector weights are out of v1 pending Legal. Code licence is Apache-2.0. COCO images have mixed terms.",
+      "includes_other_users": false,
+      "consent": "not a Vamos share"
+    }
+  ]
+}

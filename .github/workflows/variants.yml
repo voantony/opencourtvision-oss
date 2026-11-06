@@ -1,0 +1,32 @@
+# Two pipelines (eng notes §2.8.8).
+# us-build-scan: the "Vamos US" artefact is built with the best-variant code excluded, then scanned for its symbols.
+# full-build: the full ("Vamos", non-US) variant. FOLLOW-UP: move to an EU self-hosted runner (runs-on: [self-hosted, eu]);
+# GitHub-hosted runners are accepted for now (CEO, 18 Oct 05:17).
+name: variants
+on:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  us-build-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install numpy scipy
+      - run: python scripts/build_variant.py --variant us --out dist/us
+      - run: python scripts/scan_us_build.py dist/us
+      - run: cd dist/us && python -c "from opencourtvision.editloop.build import built_variant, flags; assert built_variant() == 'us' and flags('ROW').name == 'US'"
+      - run: cd dist/us && python -c "import opencourtvision.scoring.forward, opencourtvision.scoring.engine as e; from opencourtvision.editloop.build import flags; from opencourtvision.scoring.formats import get_format; assert type(e.make_scorer(flags('US', scorer='global'), get_format('tennis','advantage'))).__name__ == 'ForwardScorer'"
+  full-build:
+    runs-on: ubuntu-latest      # FOLLOW-UP: [self-hosted, eu]
+    env: { OCV_CI_REGION: EU }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: sudo apt-get update -q && sudo apt-get install -y -q ffmpeg
+      - run: pip install -e ".[dev]"
+      - run: ruff check .
+      - run: pytest -q
+      - run: python scripts/build_variant.py --variant full --out dist/full

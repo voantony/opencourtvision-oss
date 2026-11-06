@@ -1,0 +1,37 @@
+# Symbols that must never appear in a "Vamos US" artefact (scripts/scan_us_build.py). CI-only file, never packaged. One per line; '#' comments.
+# Python engine (this repo)
+opencourtvision.variants.full
+variants/full
+score_aware_select
+typed_filter_by_tracking
+VISION_RANK_FEATURES
+TRACKING_TYPES
+# Planned best-variant symbols (iOS/KMP targets, eng notes §2.8.8); listed now so the scanner is ready
+VamosFull
+Ball3DTrajectory
+fit3DTrajectory
+TypedPlaybackByTracking
+TrackingSegmenter
+CloudProcessingClient
+MultiPhoneCapture
+TwoDeviceBufferTransfer
+# v3.9: whole-match decoder (Wingfield switch, full app only)
+scoring_global
+confirm_loop
+next_best_check
+anchor_conflicts
+_global_decode
+# Legal 05:55: research-only pose syllables (sticky Viterbi) never in Vamos US
+sticky_viterbi
+Viterbi
+viterbi
+# Unconstrained research track (19 Oct): never in Vamos US
+opencourtvision.research
+research/unconstrained
+physics3d
+BallPhysics3D
+fit_flight
+ballistic_dlt
+shot_speed_3d
+TwoPhone3DFusion
+UnconstrainedScoreDecode

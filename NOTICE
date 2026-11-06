@@ -1,0 +1,45 @@
+OpenCourtVision / Vamos / RallyCut
+Copyright (c) 2026 Antony Vo
+
+The source of this distribution is licensed under the GNU Affero General Public License, version 3 only
+(SPDX: AGPL-3.0-only). See LICENSE. Nothing in this repository grants a later version of the AGPL.
+
+Contact: antonyvo@mail.grokbot.com
+
+## Trademark (pending Legal review)
+
+The names Vamos and RallyCut, and any logos, are not licensed by the AGPL-3.0. AGPL section 7 lets additional
+terms protect trademarks; this notice is that statement, written out so nobody has to infer it. You may describe
+the software and say that it is OpenCourtVision. You may not use the names or logos to imply that Antony Vo or
+the project endorses your build, and you may not place the logos in a modified version. Logo image files are
+not in this tree. This paragraph is pending review by counsel and is not itself a trademark registration.
+
+## Vendored or ported code (kept under their own licences, which are AGPL-compatible)
+
+| Component | Upstream | Licence | Where |
+|---|---|---|---|
+| TrackNetV3 network definition | github.com/qaz812345/TrackNetV3 @ 6eda442, Copyright (c) 2024 qaz812345 | MIT | `opencourtvision/ball/_vendor/tracknetv3/` |
+| Bounce clean-up (ported) | github.com/philippdubach/tennis-vision @ a501953, Copyright (c) 2026 Philipp Dubach | MIT | `opencourtvision/ball/bounce.py`, `opencourtvision/ball/LICENSE.tennis-vision` |
+
+Player-ID and pose models are not part of this release. See `weights/MANIFEST.json`.
+
+## Fonts (not relicensed)
+
+Bundled under `opencourtvision/style/presets/vamos_clean_v1/fonts/`, each with its SIL Open Font License 1.1 text:
+
+- Barlow Condensed (Black Italic, Bold, SemiBold), Google Fonts
+- Archivo Black, Google Fonts
+- JetBrains Mono (Bold, Medium), JetBrains
+
+The SIL OFL 1.1 is a free licence and, per the FSF, is not compatible with the GPL family. These font files stay
+under the OFL as separate works. They are not covered by the AGPL grant above, and they are not images.
+
+## Other runtime dependencies
+
+numpy and scipy (BSD-3-Clause), OpenCV (Apache-2.0; some pip wheels also bundle an FFmpeg build, see the engineering
+plan's licence audit), PyTorch (BSD-3-Clause), MediaPipe (Apache-2.0), mlx-whisper and openpyxl and gdown and
+pyobjc and pytest and ruff (MIT), umap-learn and scikit-learn (BSD-3-Clause), rfdetr (Apache-2.0). Ultralytics,
+imported only by `tools/point_winner/pw_tracks.py`, is AGPL-3.0, the same licence as this project.
+
+Ideas that were reimplemented without copying code are listed in the history of `THIRD_PARTY_NOTICES.md` on the
+private line. No unlicensed code or weight file is vendored here.

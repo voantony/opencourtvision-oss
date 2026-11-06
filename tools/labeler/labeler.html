@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>OCV point labeler</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root{--bg:#111;--fg:#eee;--mut:#888;--a:#3b82f6;--b:#f59e0b;--x:#666;--ok:#22c55e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.35 -apple-system,system-ui,sans-serif;display:flex;height:100vh}
+#main{flex:1;display:flex;flex-direction:column;min-width:0}
+#vwrap{flex:1;background:#000;position:relative;min-height:0;display:flex;align-items:center;justify-content:center}
+video{max-width:100%;max-height:100%}
+#drop{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:var(--mut)}
+#hud{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.65);padding:6px 10px;border-radius:6px;font-size:18px;pointer-events:none}
+#hud b{font-size:22px}
+#flash{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);font-size:56px;font-weight:700;opacity:0;transition:opacity .4s;pointer-events:none;text-shadow:0 0 12px #000}
+#bar{padding:6px 10px;border-top:1px solid #222;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#tl{height:26px;background:#1b1b1b;position:relative;cursor:pointer;margin:0 10px 6px}
+#tl .seg{position:absolute;top:3px;height:20px;border-radius:2px;opacity:.85}
+#tl .cur{outline:2px solid #fff;z-index:2}#tl #ph{position:absolute;top:0;bottom:0;width:2px;background:#f00;z-index:3}
+#side{width:390px;border-left:1px solid #222;display:flex;flex-direction:column;min-height:0}
+#cfg{padding:8px 10px;border-bottom:1px solid #222;display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:center}
+#cfg input,#cfg select{background:#222;color:var(--fg);border:1px solid #333;border-radius:4px;padding:2px 4px;width:100%}
+#list{flex:1;overflow:auto;font-variant-numeric:tabular-nums}
+.row{display:grid;grid-template-columns:34px 92px 24px 1fr;gap:6px;padding:3px 8px;border-bottom:1px solid #1a1a1a;cursor:pointer;align-items:center}
+.row.cur{background:#263044}.row .w{font-weight:700;text-align:center;border-radius:3px}
+.wA{background:var(--a);color:#fff}.wB{background:var(--b);color:#000}.wX{background:var(--x);color:#ddd}
+.sugg{opacity:.45;font-style:italic}.fav{color:#facc15}#bpass.on{background:#a16207;border-color:#facc15}.mut{color:var(--mut)}.note{color:#9cf}
+#keys{padding:6px 10px;border-top:1px solid #222;font-size:12px;color:#aaa;columns:2}
+#keys kbd{background:#333;border-radius:3px;padding:0 4px;color:#fff;font-family:inherit}
+button{background:#2a2a2a;color:var(--fg);border:1px solid #444;border-radius:4px;padding:3px 8px;cursor:pointer}
+#status{margin-left:auto;color:var(--mut);font-size:12px}
+</style></head><body>
+<div id="main">
+ <div id="vwrap">
+  <video id="v" preload="auto" playsinline></video>
+  <div id="drop"><div style="font-size:18px">Drop the match video here</div><div><input type="file" id="fv" accept="video/*,.mp4,.mov,.MP4,.MOV"></div>
+   <div class="mut">Seed / labels JSON (optional): <input type="file" id="fs" accept=".json,application/json"></div></div>
+  <div id="hud"></div><div id="flash"></div>
+ </div>
+ <div id="tl"><div id="ph"></div></div>
+ <div id="bar">
+  <span id="pos" class="mut"></span><span id="spd"></span><span id="prog"></span>
+  <label class="mut"><input type="checkbox" id="autoplay" checked> auto-play next</label>
+  <label class="mut"><input type="checkbox" id="stopend" checked> stop at point end</label>
+  <label class="mut" title="also play × segments (high fives etc.) in the favourites pass"><input type="checkbox" id="passx"> pass incl. ×</label>
+  <button id="bpass" title="V: play only the labelled points; press F for favourites, N to skip">★ Favourites pass</button>
+  <button id="bexp">Export JSON</button><button id="bimp">Import JSON</button>
+  <span id="status"></span>
+ </div>
+</div>
+<div id="side">
+ <div id="cfg">
+  <span>Team A</span><input id="tA"><span>Team B</span><input id="tB">
+  <span>My team</span><select id="mine"><option value="A">A</option><option value="B">B</option></select>
+  <span>1st server</span><select id="fsrv"><option value="A">A</option><option value="B">B</option></select>
+  <span>Sport</span><select id="sport"><option value="padel">Padel</option><option value="tennis">Tennis</option></select>
+  <span>At deuce</span><select id="deuce" title="how a game is decided at 40-40"><option value="golden_point">Golden point (punto de oro)</option><option value="advantage">Advantage</option><option value="star_point">Star point (2 ads, then deciding)</option></select>
+  <span>Tiebreak</span><select id="tiebreak"><option value="standard">7-point at 6-6</option><option value="super_tiebreak">7-point at 6-6, super-tiebreak to 10 for 3rd set</option><option value="none">None (sets won by 2)</option></select>
+  <span id="fmtwarn" class="note" style="grid-column:1/-1"></span>
+ </div>
+ <div id="list"></div>
+ <div id="keys">
+  <div><kbd>A</kbd>/<kbd>B</kbd> team won point</div><div><kbd>Enter</kbd> accept grey suggestion</div>
+  <div><kbd>X</kbd> not a point (fault/let)</div><div><kbd>S</kbd> flip server here</div>
+  <div><kbd>Space</kbd> play/pause</div><div><kbd>R</kbd> replay point</div>
+  <div><kbd>N</kbd>/<kbd>↓</kbd> next, <kbd>P</kbd>/<kbd>↑</kbd> prev</div><div><kbd>U</kbd> next unlabeled</div>
+  <div><kbd>←</kbd>/<kbd>→</kbd> ±2s (<kbd>⇧</kbd> ±10s)</div><div><kbd>,</kbd>/<kbd>.</kbd> frame step</div>
+  <div><kbd>[</kbd>/<kbd>]</kbd> set start/end here</div><div><kbd>I</kbd> insert/split at playhead</div>
+  <div><kbd>M</kbd> merge with next</div><div><kbd>⌫</kbd> delete segment</div>
+  <div><kbd>Z</kbd> undo, <kbd>⇧Z</kbd> redo</div><div><kbd>-</kbd>/<kbd>=</kbd> speed</div>
+  <div><kbd>E</kbd> note</div><div><kbd>G</kbd> go to point #</div>
+  <div><kbd>F</kbd> ★ favourite (any segment)</div><div><kbd>V</kbd> favourites pass on/off</div>
+ </div>
+</div>
+<input type="file" id="fimp" accept=".json,application/json" style="display:none">
+<script>
+"use strict";
+const $=id=>document.getElementById(id), V=$("v");
+const SERVED=location.protocol.startsWith("http");
+const SPEEDS=[0.5,1,1.5,2,3,4];
+let S=null;                 // session (exported as-is plus computed fields)
+let undo=[], redo=[], uid=1, cfgVideo=null, saveTimer=null, lastSavedJSON="";
+
+// ---------------------------------------------------------------- tennis / padel rules (mirrors opencourtvision/scoring/rules.py + formats.py)
+// Match format = {deuce: advantage|golden_point|star_point, tiebreak: standard|super_tiebreak|none}. Old label files only
+// have match.preset ("advantage" / "no_ad"); fmtOf() maps them.
+function fmtOf(m){const f=m.format||{}; const legacy=m.preset==="no_ad"||m.preset==="golden_point"?"golden_point":m.preset==="star_point"||m.preset==="fip_star_point"?"star_point":"advantage";
+  return {deuce:f.deuce_rule||legacy, tiebreak:f.tiebreak||"standard"};}
+const DEC={golden_point:1,star_point:3,advantage:null};
+const OTHER={A:"B",B:"A"};
+function init(first){return {sets:[0,0],games:[0,0],pts:[0,0],server:first,tb:0,tb_first:null,done:false}}
+function cp(s){return JSON.parse(JSON.stringify(s))}
+function advance(st,w,f){
+  const s=cp(st), wi=w==="A"?0:1; delete s.last_set; s.pts[wi]++;
+  if(s.tb){const n=s.pts[0]+s.pts[1];
+    if(Math.max(...s.pts)>=s.tb&&Math.abs(s.pts[0]-s.pts[1])>=2){
+      if(st.mtb){const r=endSet(s,w,OTHER[st.tb_first],f); r.last_set=[...s.pts]; r.last_mtb=true; return r;}
+      s.games[wi]++; return endSet(s,w,OTHER[st.tb_first],f);}
+    s.server=(Math.floor((n+1)/2)%2===0)?st.tb_first:OTHER[st.tb_first]; return s;}
+  const si=st.server==="A"?0:1, sv=s.pts[si], rv=s.pts[1-si], s0=st.pts[si], r0=st.pts[1-si];
+  const dec=DEC[f.deuce], deciding=dec!==null&&s0>=3&&s0===r0&&(s0-2)>=dec;
+  if(!(deciding||(sv>=4&&sv-rv>=2)||(rv>=4&&rv-sv>=2))){
+    if(f.deuce==="advantage"&&Math.min(...s.pts)>3){s.pts[0]--;s.pts[1]--;} return s;}
+  s.games[wi]++; const [ga,gb]=s.games, n=ga+gb;
+  const won=f.tiebreak==="none"?(Math.max(ga,gb)>=6&&Math.abs(ga-gb)>=2):
+    (Math.max(ga,gb)>=6&&Math.abs(ga-gb)>=2)||((st.games[0]===6&&st.games[1]===5||st.games[0]===5&&st.games[1]===6)&&Math.max(ga,gb)===7);
+  if(won) return endSet(s,w,OTHER[st.server],f);
+  s.pts=[0,0]; s.server=OTHER[st.server];
+  if(f.tiebreak!=="none"&&ga===6&&gb===6){s.tb=7;s.tb_first=s.server;}
+  return s;
+}
+function endSet(s,w,next,f){const sets=[...s.sets]; sets[w==="A"?0:1]++;
+  const r={sets,games:[0,0],pts:[0,0],server:next,tb:0,tb_first:null,done:Math.max(...sets)>=2,last_set:[...s.games]};
+  if(!r.done&&f&&f.tiebreak==="super_tiebreak"&&sets[0]===1&&sets[1]===1){r.tb=10;r.tb_first=next;r.mtb=true;}
+  return r;}
+const NM=["0","15","30","40"];
+function isDeciding(st,f){const si=st.server==="A"?0:1, s=st.pts[si], r=st.pts[1-si], dec=DEC[f.deuce];
+  return !st.tb&&dec!==null&&s>=3&&s===r&&(s-2)>=dec;}
+function call(st,f){const si=st.server==="A"?0:1, s=st.pts[si], r=st.pts[1-si];
+  if(st.tb) return (st.mtb?"super-TB ":"")+`${s}-${r}`;
+  if(s<3||r<3) return `${NM[Math.min(s,3)]}-${NM[Math.min(r,3)]}`;
+  if(s===r) return f.deuce==="star_point"?`deuce ${s-2}`:"deuce"; return s>r?"ad in":"ad out";}   // same text as rules.score_call
+function callUI(st,f){return call(st,f)+(isDeciding(st,f)?(f.deuce==="golden_point"?" · golden point":" · star point"):"");}
+function side(st,f){
+  if(isDeciding(st,f)) return null;   // receivers choose the side on a golden / star point
+  return (st.pts[0]+st.pts[1])%2===0?"deuce":"ad";}
+
+// effective winner: user label, else accepted suggestion only for display (provisional)
+function effective(p){
+  if(p.kind==="non_point") return {w:"skip",prov:false};
+  if(p.winner) return {w:p.winner,prov:false};
+  if(p.sugg_kind==="non_point?") return {w:"skip",prov:true};
+  if(p.sugg_winner) return {w:p.sugg_winner,prov:true};
+  return {w:"skip",prov:true};
+}
+// replay: per segment the state BEFORE it; server overrides reset the rotation at that point
+function replayWith(f){
+  let st=init(S.match.first_server||"A"), prov=false; const out=[]; const setScores=[];
+  for(const p of S.points){
+    const before=st.server;
+    if(p.server_override&&!st.done) st.server=p.server_override;
+    const e=effective(p);
+    out.push({st:cp(st),prov,done:st.done,rule_server:before});
+    if(e.w!=="skip"&&!st.done){ if(e.prov) prov=true; const nx=advance(st,e.w,f); if(nx.last_set) setScores.push(nx.last_set); st=nx; }
+  }
+  return {states:out,final:st,setScores,prov};
+}
+// Games whose labels only fit advantage scoring (checked whenever the setting is golden or star point): a server change
+// you marked with S that the chosen rule contradicts but advantage scoring explains (the game went on past 40-40), or a
+// final score that only advantage scoring reproduces. Returns {segs:Set of segment indexes, games:[{seg, game}], finalOnlyAdv}.
+function advantageOnly(f,R){
+  const res={segs:new Set(),games:[],finalOnlyAdv:false};
+  if(f.deuce==="advantage") return res;
+  const A=replayWith({...f,deuce:"advantage"});
+  S.points.forEach((p,i)=>{
+    if(!p.server_override) return;
+    const g=R.states[i], a=A.states[i];
+    if(g.done||a.done) return;
+    if(g.rule_server!==p.server_override&&a.rule_server===p.server_override){
+      // the game this belongs to: walk back to the last segment where advantage scoring had a deuce
+      let j=i-1; while(j>=0&&!(a&&A.states[j].st.pts[0]>=3&&A.states[j].st.pts[1]>=3)) j--;
+      res.segs.add(i); if(j>=0) res.segs.add(j);
+      const st=g.st; res.games.push({seg:i+1,game:`${scoreStr(st,R.setScores.slice(0,st.sets[0]+st.sets[1]))}`});
+    }
+  });
+  const hint=normScore(S.match.final_hint);
+  if(hint&&R.final.done&&A.final.done&&normScore(scoreStr(R.final,R.setScores))!==hint&&normScore(scoreStr(A.final,A.setScores))===hint) res.finalOnlyAdv=true;
+  return res;
+}
+function normScore(s){return s?String(s).replace(/\(\d+\)/g,"").trim().replace(/\s+/g," "):null;}
+function replayAll(){const f=fmtOf(S.match), R=replayWith(f); R.f=f; R.adv=advantageOnly(f,R); return R;}
+function scoreStr(st,setScores){
+  const sets=setScores.map(g=>`${g[0]}-${g[1]}`); if(!st.done) sets.push(st.mtb?`[${st.pts[0]}-${st.pts[1]}]`:`${st.games[0]}-${st.games[1]}`); return sets.join(" ");}
+
+// ---------------------------------------------------------------- session
+function fromSeed(seed){
+  return {schema:"ocv.point_labels.v1",
+    video:{name:seed.video||null,duration:null},
+    match:{date:seed.date||null,sport:seed.sport||"tennis",preset:seed.preset||"advantage",format:seed.format||null,teams:seed.teams||{A:"Team A",B:"Team B"},
+      mine:"A",first_server:seed.first_server||"A",final_hint:seed.final_hint||null},
+    labeler:{version:1,started:new Date().toISOString(),updated:null,seconds_spent:0},
+    points:seed.points.map(p=>({id:uid++,start:p.start,end:p.end,kind:null,winner:null,winner_src:null,server_override:null,notes:"",
+      sugg_winner:p.sugg_winner||null,sugg_server:p.sugg_server||null,sugg_kind:p.sugg_kind||null,sv_point:p.sv_point??null,sv_detail:p.sv_detail||null,
+      seed_flags:[p.sv_only?"sv_only":null,p.split_by_seed?"split_by_seed":null].filter(Boolean)})),
+    cur:0};
+}
+function adopt(obj){
+  if(obj.schema==="ocv.labeler_seed.v1") S=fromSeed(obj);
+  else if(obj.schema==="ocv.point_labels.v1"){S=obj; S.points.forEach(p=>{p.id=uid++;}); S.cur=Math.min(S.cur||0,S.points.length-1);}
+  else throw new Error("unknown JSON schema: "+obj.schema);
+  undo=[];redo=[]; syncCfg(); render(); seekCur(false);
+}
+function snapshot(){undo.push(JSON.stringify(S)); if(undo.length>500) undo.shift(); redo=[];}
+function changed(){S.labeler.updated=new Date().toISOString(); render(); persist();}
+function storageKey(){return "ocv-labeler:"+(S&&S.video.name||cfgVideo||"untitled");}
+
+// ---------------------------------------------------------------- export (computed per-point fields = training rows)
+function exportObj(){
+  const R=replayAll(), pr=R.f, o=cp(S); o.match.format={deuce_rule:pr.deuce,tiebreak:pr.tiebreak};
+  let n=0;
+  o.points=S.points.map((p,i)=>{const st=R.states[i].st; const rec={
+      idx:i+1, start:+p.start.toFixed(3), end:+p.end.toFixed(3),
+      kind:p.kind||(p.winner?"point":null), winner:p.winner, winner_src:p.winner_src,
+      server:st.server, server_src:p.server_override?"user":"rules", side:side(st,pr),
+      score_before:{sets:st.sets,games:st.games,pts:st.pts,tiebreak:!!st.tb,call:call(st,pr)},
+      notes:p.notes||"", sugg_winner:p.sugg_winner, sugg_server:p.sugg_server, sugg_kind:p.sugg_kind, sv_point:p.sv_point, sv_detail:p.sv_detail,
+      seed_flags:p.seed_flags||[], server_override:p.server_override, favorite:!!p.favorite, fav_seen:!!p.fav_seen};
+    if(rec.kind==="point") rec.point_no=++n; return rec;});
+  const lab=S.points.filter(p=>p.kind).length;
+  o.decoded={score:scoreStr(R.final,R.setScores),sets:R.final.sets,done:R.final.done,provisional:R.prov,
+    winners:S.points.map(p=>p.kind==="non_point"?"skip":(p.winner||null)),
+    n_segments:S.points.length,n_labeled:lab,n_points:S.points.filter(p=>p.kind==="point").length,
+    n_favorites:S.points.filter(p=>p.favorite).length,n_fav_seen:S.points.filter(p=>p.fav_seen).length,
+    format:{deuce_rule:pr.deuce,tiebreak:pr.tiebreak},advantage_only_games:R.adv.games,final_fits_only_advantage:R.adv.finalOnlyAdv};
+  delete o.cur; o.cur=S.cur; return o;
+}
+function persist(){
+  const j=JSON.stringify(exportObj());
+  try{localStorage.setItem(storageKey(),j);}catch(e){}
+  if(SERVED){clearTimeout(saveTimer); saveTimer=setTimeout(()=>saveServer(j),800);}
+  else status("autosaved in browser (Export to keep a file)");
+}
+async function saveServer(j){
+  if(j===lastSavedJSON) return;
+  try{const r=await fetch("labels",{method:"POST",headers:{"Content-Type":"application/json"},body:j});
+    const t=await r.json(); if(!r.ok) throw new Error(t.error); lastSavedJSON=j; status("saved "+t.path+" "+new Date().toLocaleTimeString());}
+  catch(e){status("SAVE FAILED: "+e.message+" (kept in browser)");}
+}
+function download(){const j=JSON.stringify(exportObj(),null,1), a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([j],{type:"application/json"}));
+  a.download=(S.video.name||"match").replace(/\.[^.]+$/,"")+".labels.json"; a.click();}
+function status(t){$("status").textContent=t;}
+
+// ---------------------------------------------------------------- UI
+function syncCfg(){$("tA").value=S.match.teams.A;$("tB").value=S.match.teams.B;$("mine").value=S.match.mine;$("fsrv").value=S.match.first_server;const f=fmtOf(S.match);$("sport").value=S.match.sport||"tennis";$("deuce").value=f.deuce;$("tiebreak").value=f.tiebreak;}
+["tA","tB"].forEach(id=>$(id).addEventListener("change",e=>{snapshot();S.match.teams[id[1]]=e.target.value;changed();}));
+$("mine").addEventListener("change",e=>{snapshot();S.match.mine=e.target.value;changed();});
+$("fsrv").addEventListener("change",e=>{snapshot();S.match.first_server=e.target.value;changed();});
+$("sport").addEventListener("change",e=>{snapshot();S.match.sport=e.target.value;changed();});
+["deuce","tiebreak"].forEach(id=>$(id).addEventListener("change",()=>{snapshot();const f=fmtOf(S.match);
+  S.match.format={deuce_rule:$("deuce").value,tiebreak:$("tiebreak").value};
+  S.match.preset=S.match.format.deuce_rule==="advantage"?"advantage":S.match.format.deuce_rule; changed();}));
+const fmt=t=>{t=Math.max(0,t||0);const h=Math.floor(t/3600),m=Math.floor(t/60)%60,s=(t%60).toFixed(1).padStart(4,"0");return (h?h+":":"")+String(m).padStart(2,"0")+":"+s;};
+const tn=t=>t==="A"||t==="B"?S.match.teams[t]+(S.match.mine===t?" (me)":""):"";
+
+function render(){
+  if(!S) return;
+  const R=replayAll(), pr=R.f, list=$("list");
+  let html="", n=0;
+  S.points.forEach((p,i)=>{
+    const st=R.states[i].st, e=effective(p); const isPt=e.w!=="skip"; if(isPt) n++;
+    const lab=p.kind==="non_point"?'<span class="w wX">×</span>':p.winner?`<span class="w w${p.winner}">${p.winner}</span>`:
+      p.sugg_winner?`<span class="w w${p.sugg_winner} sugg">${p.sugg_winner}</span>`:p.sugg_kind?'<span class="w wX sugg">×?</span>':'<span class="mut">·</span>';
+    const sc=isPt?`${scoreStr(st,R.setScores.slice(0,st.sets[0]+st.sets[1]))} · ${callUI(st,pr)} · srv ${st.server}${p.server_override?"*":""}`:'<span class="mut">—</span>';
+    html+=`<div class="row${i===S.cur?" cur":""}" data-i="${i}"><span class="mut">${i+1}</span><span>${fmt(p.start)}</span>${lab}<span>${p.favorite?'<span class="fav">★</span> ':''}${sc}${p.notes?' <span class="note">✎ '+esc(p.notes)+'</span>':''}${p.seed_flags&&p.seed_flags.length?' <span class="mut">['+p.seed_flags.join(",")+']</span>':''}${R.adv.segs.has(i)?' <span class="note" title="this game only fits advantage scoring">⚠ advantage?</span>':''}</span></div>`;
+  });
+  list.innerHTML=html;
+  const cr=list.querySelector(".row.cur"); if(cr) cr.scrollIntoView({block:"nearest"});
+  // HUD
+  const p=S.points[S.cur]; if(p){const st=R.states[S.cur].st;
+    $("hud").innerHTML=`Seg ${S.cur+1}/${S.points.length} · games <b>${scoreStr(st,R.setScores.slice(0,st.sets[0]+st.sets[1]))}</b> · ${callUI(st,pr)} · serving: ${tn(st.server)}${side(st,pr)?" ("+side(st,pr)+")":""}${R.states[S.cur].prov?' <span class="mut">~</span>':''}${p.favorite?' <span class="fav">★</span>':''}${passMode?' <span class="fav" style="font-size:13px">[favourites pass]</span>':''}${p.sv_detail?'<br><span class="mut" style="font-size:13px">SV: '+esc(p.sv_detail)+'</span>':''}`;}
+  const lab=S.points.filter(p=>p.kind).length;
+  const aw=R.adv.games.length?`⚠ ${R.adv.games.length} game(s) only fit advantage scoring (segments ${R.adv.games.map(g=>g.seg).join(", ")}): switch "At deuce" to Advantage if the match was played with ads.`:"";
+  $("fmtwarn").textContent=aw+(R.adv.finalOnlyAdv?(aw?" ":"")+`⚠ Your labels give ${S.match.final_hint} only with advantage scoring.`:"");
+  $("prog").textContent=`${lab}/${S.points.length} labeled · ★ ${S.points.filter(p=>p.favorite).length} · final ${scoreStr(R.final,R.setScores)}${R.prov?" (~)":""}`;
+  // timeline
+  const D=V.duration||S.video.duration||Math.max(...S.points.map(p=>p.end))+10, tl=$("tl");
+  tl.querySelectorAll(".seg").forEach(e=>e.remove());
+  S.points.forEach((p,i)=>{const d=document.createElement("div");d.className="seg"+(i===S.cur?" cur":"");
+    d.style.left=(100*p.start/D)+"%";d.style.width=Math.max(.15,100*(p.end-p.start)/D)+"%";
+    d.style.background=p.kind==="non_point"?"#555":p.winner==="A"?"#3b82f6":p.winner==="B"?"#f59e0b":"#999";tl.appendChild(d);});
+  $("spd").textContent=V.playbackRate+"×";
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+function flash(t,c){const f=$("flash");f.textContent=t;f.style.color=c||"#fff";f.style.opacity=1;clearTimeout(flash.t);flash.t=setTimeout(()=>f.style.opacity=0,350);}
+$("list").addEventListener("click",e=>{const r=e.target.closest(".row");if(!r)return;S.cur=+r.dataset.i;render();seekCur(false);});
+$("tl").addEventListener("click",e=>{const r=$("tl").getBoundingClientRect();const D=V.duration||1;V.currentTime=D*(e.clientX-r.left)/r.width;
+  const i=S.points.findIndex(p=>p.start<=V.currentTime&&V.currentTime<=p.end); if(i>=0){S.cur=i;render();}});
+
+function seekCur(play){const p=S.points[S.cur]; if(!p) return; if(V.readyState>0||V.src) V.currentTime=Math.max(0,p.start); stopAt=p.end+0.4; if(play&&V.src) V.play().catch(()=>{});}
+let stopAt=null;
+V.addEventListener("timeupdate",()=>{
+  if(!S) return; const t=V.currentTime; $("pos").textContent=fmt(t)+" / "+fmt(V.duration);
+  const D=V.duration||1; $("ph").style.left=(100*t/D)+"%";
+  if(passMode&&stopAt!=null&&!V.paused&&t>=stopAt){V.pause();stopAt=null;passEnded();return;}
+  if($("stopend").checked&&stopAt!=null&&!V.paused&&t>=stopAt){V.pause();stopAt=null;}
+});
+V.addEventListener("loadedmetadata",()=>{$("drop").style.display="none"; if(S){S.video.duration=V.duration; render(); seekCur(false);}});
+
+function go(i,play){if(!S.points.length)return;S.cur=Math.max(0,Math.min(S.points.length-1,i));render();seekCur(play);}
+function label(w,src){const p=S.points[S.cur];snapshot();
+  if(w==="X"){p.kind=p.kind==="non_point"?null:"non_point";p.winner=null;p.winner_src=p.kind?src:null;flash(p.kind?"not a point":"cleared","#aaa");}
+  else{p.kind="point";p.winner=w;p.winner_src=src;flash(tn(w)||w,w==="A"?"#3b82f6":"#f59e0b");}
+  p.labeled_at=new Date().toISOString(); changed();
+  if(S.cur<S.points.length-1) go(S.cur+1,$("autoplay").checked);
+}
+function insertAt(){const t=V.currentTime;snapshot();
+  const i=S.points.findIndex(p=>p.start<t&&t<p.end);
+  if(i>=0){const p=S.points[i];const np={...cp(p),id:uid++,start:t,kind:null,winner:null,winner_src:null,notes:"",server_override:null,sugg_winner:null,sugg_server:null,sugg_kind:null,sv_point:null,sv_detail:null,seed_flags:["user_split"]};
+    p.end=t;S.points.splice(i+1,0,np);S.cur=i+1;}
+  else{let j=S.points.findIndex(p=>p.start>t); if(j<0) j=S.points.length;
+    const end=Math.min(t+10,j<S.points.length?S.points[j].start:t+10);
+    S.points.splice(j,0,{id:uid++,start:t,end,kind:null,winner:null,winner_src:null,server_override:null,notes:"",sugg_winner:null,sugg_server:null,sugg_kind:null,sv_point:null,sv_detail:null,seed_flags:["user_added"]});S.cur=j;}
+  flash("+ segment");changed();}
+function mergeNext(){const i=S.cur;if(i>=S.points.length-1)return;snapshot();const a=S.points[i],b=S.points[i+1];
+  a.end=Math.max(a.end,b.end);a.notes=[a.notes,b.notes].filter(Boolean).join(" | ");
+  if(!a.kind&&b.kind){a.kind=b.kind;a.winner=b.winner;a.winner_src=b.winner_src;}
+  if(!a.sugg_winner&&b.sugg_winner){a.sugg_winner=b.sugg_winner;a.sugg_server=b.sugg_server;a.sv_point=b.sv_point;a.sv_detail=b.sv_detail;a.sugg_kind=null;}
+  a.seed_flags=[...(a.seed_flags||[]),"user_merged"];S.points.splice(i+1,1);flash("merged");changed();}
+function del(){if(!S.points.length)return;snapshot();S.points.splice(S.cur,1);S.cur=Math.min(S.cur,S.points.length-1);flash("deleted","#f66");changed();}
+function setEdge(k){const p=S.points[S.cur];snapshot();const t=V.currentTime;
+  if(k==="start"){p.start=Math.min(t,p.end-0.1);}else{p.end=Math.max(t,p.start+0.1);}
+  S.points.sort((a,b)=>a.start-b.start);S.cur=S.points.indexOf(p);flash(k+" set");changed();}
+function flipServer(){const R=replayAll();const p=S.points[S.cur];snapshot();
+  const cur=R.states[S.cur].st.server; p.server_override=p.server_override?null:OTHER[cur];
+  if(!p.server_override) flash("server: rules"); else flash("server → "+p.server_override); changed();}
+function doUndo(){if(!undo.length)return;redo.push(JSON.stringify(S));S=JSON.parse(undo.pop());syncCfg();changed();seekCur(false);flash("undo");}
+function doRedo(){if(!redo.length)return;undo.push(JSON.stringify(S));S=JSON.parse(redo.pop());syncCfg();changed();seekCur(false);flash("redo");}
+function speed(d){const i=SPEEDS.indexOf(V.playbackRate);V.playbackRate=SPEEDS[Math.max(0,Math.min(SPEEDS.length-1,(i<0?1:i)+d))];render();}
+
+// ---------------------------------------------------------------- favourites pass: only labelled points, F / N
+let passMode=false, passTimer=null;
+const isPassSeg=p=>p.kind==="point"||($("passx")&&$("passx").checked&&p.kind==="non_point");
+function passFind(from,dir){for(let i=from;i>=0&&i<S.points.length;i+=dir) if(isPassSeg(S.points[i])) return i; return -1;}
+function markSeen(i){const p=S.points[i]; if(p&&isPassSeg(p)&&!p.fav_seen){p.fav_seen=true; S.labeler.updated=new Date().toISOString(); persist();}}
+function passGo(dir){clearTimeout(passTimer); const j=passFind(S.cur+dir,dir);
+  if(j<0){V.pause(); flash("pass done ★"+S.points.filter(p=>p.favorite).length,"#facc15"); render(); return;}
+  go(j,true);}
+function passEnded(){markSeen(S.cur); render(); passTimer=setTimeout(()=>passGo(1),1200);}   // 1.2 s to press F for this point
+function setPass(on){passMode=on; clearTimeout(passTimer); $("bpass").classList.toggle("on",on);
+  if(on){ let j=S.points.findIndex(p=>isPassSeg(p)&&!p.fav_seen); if(j<0) j=passFind(0,1);   // resume at the first unseen point
+    if(j>=0) go(j,true); flash("favourites pass","#facc15"); }
+  else{ V.pause(); flash("pass off"); } render();}
+$("bpass").addEventListener("click",()=>{setPass(!passMode); $("bpass").blur();});
+function toggleFav(){const p=S.points[S.cur]; snapshot(); p.favorite=!p.favorite; if(passMode) p.fav_seen=true;
+  flash(p.favorite?"★":"☆","#facc15"); changed();}
+
+document.addEventListener("keydown",e=>{
+  if(!S||e.target.tagName==="INPUT"||e.target.tagName==="SELECT") return;
+  const k=e.key, K=k.toLowerCase(), meta=e.metaKey||e.ctrlKey;
+  if(meta&&K==="z"){e.preventDefault();e.shiftKey?doRedo():doUndo();return;}
+  if(meta) return;
+  let h=true;
+  switch(true){
+    case K==="f": toggleFav(); break;
+    case K==="v": setPass(!passMode); break;
+    case passMode&&(K==="n"||k==="ArrowDown"): markSeen(S.cur); passGo(1); break;
+    case passMode&&(K==="p"||k==="ArrowUp"): passGo(-1); break;
+    case K==="a": label("A","user"); break;
+    case K==="b": label("B","user"); break;
+    case K==="x": label("X","user"); break;
+    case k==="Enter": {const p=S.points[S.cur]; if(p.sugg_winner&&!p.kind) label(p.sugg_winner,"user_accepted_suggestion");
+      else if(p.sugg_kind&&!p.kind) label("X","user_accepted_suggestion"); else go(S.cur+1,$("autoplay").checked); break;}
+    case K==="s": flipServer(); break;
+    case k===" ": V.paused?(stopAt=S.points[S.cur]?S.points[S.cur].end+0.4:null,V.play()):V.pause(); break;
+    case K==="r": seekCur(true); break;
+    case K==="n"||k==="ArrowDown": go(S.cur+1,$("autoplay").checked); break;
+    case K==="p"||k==="ArrowUp": go(S.cur-1,$("autoplay").checked); break;
+    case K==="u": {const j=S.points.findIndex((p,i)=>i>S.cur&&!p.kind); go(j>=0?j:S.points.findIndex(p=>!p.kind),true); break;}
+    case k==="ArrowLeft": V.currentTime-=e.shiftKey?10:2; break;
+    case k==="ArrowRight": V.currentTime+=e.shiftKey?10:2; break;
+    case k===",": V.pause(); V.currentTime-=1/30; break;
+    case k===".": V.pause(); V.currentTime+=1/30; break;
+    case k==="[": setEdge("start"); break;
+    case k==="]": setEdge("end"); break;
+    case K==="i": insertAt(); break;
+    case K==="m": mergeNext(); break;
+    case k==="Backspace"||k==="Delete": del(); break;
+    case K==="z": e.shiftKey?doRedo():doUndo(); break;
+    case k==="-"||k==="_": speed(-1); break;
+    case k==="="||k==="+": speed(1); break;
+    case K==="e": {const p=S.points[S.cur]; const t=prompt("Note for segment "+(S.cur+1)+":",p.notes||""); if(t!==null){snapshot();p.notes=t;changed();} break;}
+    case K==="g": {const t=prompt("Go to segment #:"); if(t) go((+t)-1,false); break;}
+    default: h=false;
+  }
+  if(h) e.preventDefault();
+});
+
+// ---------------------------------------------------------------- loading
+function loadFile(f){cfgVideo=f.name;V.src=URL.createObjectURL(f);if(S){S.video.name=f.name;} else restoreLocal();}
+function restoreLocal(){const j=localStorage.getItem("ocv-labeler:"+cfgVideo); if(j){adopt(JSON.parse(j)); status("restored from browser");}}
+$("fv").addEventListener("change",e=>e.target.files[0]&&loadFile(e.target.files[0]));
+$("fs").addEventListener("change",e=>e.target.files[0]&&readJSON(e.target.files[0]));
+$("bimp").addEventListener("click",()=>$("fimp").click());
+$("fimp").addEventListener("change",e=>e.target.files[0]&&readJSON(e.target.files[0]));
+$("bexp").addEventListener("click",download);
+function readJSON(f){f.text().then(t=>{const o=JSON.parse(t); if(S) snapshot(); adopt(o); if(cfgVideo&&!S.video.name) S.video.name=cfgVideo; persist();}).catch(e=>alert("Bad JSON: "+e.message));}
+$("vwrap").addEventListener("dragover",e=>e.preventDefault());
+$("vwrap").addEventListener("drop",e=>{e.preventDefault();for(const f of e.dataTransfer.files){if(/json$/i.test(f.name)) readJSON(f); else loadFile(f);}});
+setInterval(()=>{if(S&&!V.paused&&document.hasFocus()) S.labeler.seconds_spent=(S.labeler.seconds_spent||0)+5;},5000);
+
+async function boot(){
+  if(!SERVED){status("open via serve.py to save next to the video; otherwise use Export");return;}
+  try{
+    const cfg=await (await fetch("config.json")).json(); cfgVideo=cfg.video_name;
+    let srv=null, loc=null;
+    const r=await fetch("labels"); if(r.ok) srv=await r.json();
+    const lj=localStorage.getItem("ocv-labeler:"+cfg.video_name); if(lj) loc=JSON.parse(lj);
+    let pick=srv; if(loc&&(!srv||(loc.labeler.updated||"")>(srv.labeler.updated||""))) pick=loc;
+    if(!pick&&cfg.has_seed) pick=await (await fetch("seed.json")).json();
+    if(pick){adopt(pick); S.video.name=cfg.video_name;}
+    if(cfg.has_video) V.src="video";
+    if(S&&new URLSearchParams(location.search).get("pass")) setPass(true);
+    status(srv?"loaded "+cfg.labels_path:pick?"new session from seed":"no seed: drop a seed/labels JSON");
+  }catch(e){status("boot error: "+e.message);}
+}
+window.__ocv={get S(){return S}, exportObj, replayAll, get passMode(){return passMode}};   // for tests
+boot();
+</script></body></html>
