@@ -18,6 +18,9 @@ stt = ["mlx-whisper>=0.4; sys_platform == 'darwin' and platform_machine == 'arm6
 tracknet = ["torch>=2.2"]                                      # BSD-3; TrackNetV3 weights via ocv-fetch-weights
 ball = ["torch>=2.2", "opencv-python>=4.8", "gdown>=5"]        # ball engine v2 (gdown: MIT, Drive download)
 swingvision = ["openpyxl>=3.1"]                                    # MIT; reading SwingVision exports
+pose = ["mediapipe>=0.10", "opencv-python>=4.8"]                    # Apache-2.0; model downloaded at runtime
+pose-mac = ["pyobjc-framework-Vision>=10; sys_platform == 'darwin'", "pyobjc-framework-Quartz>=10; sys_platform == 'darwin'"]
+players = ["torch>=2.2", "opencv-python>=4.8", "gdown>=5", "scikit-learn>=1.3", "rfdetr>=1.2"]  # player ID; rfdetr Apache-2.0, sklearn BSD-3; weights at runtime
 embed = ["umap-learn>=0.5"]                                          # BSD-3-Clause, optional 2-D syllable map
 dev = ["pytest>=8", "ruff>=0.5", "opencv-python>=4.8", "openpyxl>=3.1"]
 
@@ -32,6 +35,7 @@ ocv-bench-ball = "opencourtvision.cli.bench_ball:main"
 ocv-label-ball = "opencourtvision.cli.label_ball:main"
 ocv-fetch-weights = "opencourtvision.cli.fetch_weights:main"
 ocv-app = "opencourtvision.app.__main__:main"
+ocv-pose = "opencourtvision.cli.pose:main"
 
 [tool.setuptools.packages.find]
 include = ["opencourtvision*"]
@@ -39,7 +43,7 @@ include = ["opencourtvision*"]
 [tool.ruff]
 line-length = 160
 target-version = "py310"
-extend-exclude = ["opencourtvision/ball/_vendor"]   # third-party code kept byte-identical to upstream
+extend-exclude = ["opencourtvision/ball/_vendor", "opencourtvision/players/_vendor"]   # third-party code kept byte-identical to upstream
 
 [tool.ruff.lint]
 select = ["E", "F", "I"]

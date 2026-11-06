@@ -12,6 +12,8 @@ point boundaries and labels are only *verified* when independent audio and visua
 - **Ball-follow 9:16 reel**: tracks the ball and pans a vertical crop over the 4K frame, with slow-mo ramps at contact and captions. *(work in progress)*
 - **Doubles label schema, verify gate and `ocv eval`** *(new)*: typed shot labels with handedness rules, captions only for verified events, and per-event/per-label precision/recall against JSON ground truth.
 - **Story / shot finder**: per-point excitement, a momentum curve, story beats (opener, turning point, longest rally, peak, close) and difficult-shot candidates. *(work in progress)*
+- **Pose and stroke analysis** *(WIP)*: serve/forehand/backhand at each hit (audio onset confirmed by a wrist-speed peak), stance angle, contact point, finish height, serve lean, footwork and court coverage, unsupervised movement "syllables", and era/group comparisons. See [docs/pose.md](docs/pose.md).
+- **Player identification** *(WIP)*: four stable identities in doubles from court position, motion, clothing colour and an optional re-ID embedding (no faces). See [docs/player_id.md](docs/player_id.md).
 
 Everything runs locally. The primary target is Apple Silicon (developed on an M2 Pro); the core pipeline also runs on Linux.
 
@@ -22,9 +24,11 @@ git clone <this repository> && cd OpenCourtVision
 python3 -m venv .venv && source .venv/bin/activate
 pip install -e ".[reel,dev]"          # add ".[stt]" on Apple Silicon for callout transcription
 python benchmarks/run_eval.py         # synthetic clips only; no footage in the repo
+python benchmarks/run_pose_eval.py                 # stroke labelling on synthetic stick figures
 python benchmarks/public_eval/measure.py           # far-player recall and p(A) calibration
 python benchmarks/public_eval/run_eval.py          # point-winner harness, synthetic bundle
 python benchmarks/detector_bench.py                # in-memory frames, no images written
+ocv-pose demo                                      # synthetic player, no video needed (needs ".[pose]")
 ```
 
 The code is AGPL-3.0-only. If you run a modified version as a network service that users interact with, you must offer those users the source of that version (AGPL section 13). Names and logos are not covered by the licence; see NOTICE.
@@ -43,7 +47,7 @@ Demo data in this tree is synthetic. Public clips, if you add them, must be CC0 
 - **Apple Silicon target (M2 Pro).** `--stt` uses mlx-whisper on the Apple GPU. The reel decodes with `-hwaccel videotoolbox` and encodes with `h264_videotoolbox`, and the optional TrackNet runs on `mps`. On Linux the reel falls back to software decode and `libx264`, and `--stt` is unavailable.
 - Fonts: `$OCV_FONT`, else macOS Arial Bold or DejaVu Sans Bold, else the fontconfig default.
 
-See `requirements.txt` (pip) or `pyproject.toml` extras: `reel`, `stt`, `tracknet`, `dev`.
+See `requirements.txt` (pip) or `pyproject.toml` extras: `reel`, `stt`, `tracknet`, `pose`/`pose-mac`, `players`, `dev`.
 
 ## Usage
 
@@ -139,6 +143,28 @@ faster than first), coordinates outside the court, sequence and Detail contradic
 points, and points that end too soon after the last contact. Player names are replaced by H1/H2/G1/G2 in all output.
 Never commit a real export.
 
+### `ocv-pose`: pose, strokes and mechanics *(WIP)*
+
+```bash
+pip install -e ".[pose]"                                   # MediaPipe (Apache-2.0); model downloads on first use
+ocv-pose demo                                              # synthetic player, no video needed
+ocv-pose extract match.mp4 --rallies work/rallies.json --out work/kp_near.npz     # pose only near audio hits
+ocv-pose analyze work/kp_near.npz --rallies work/rallies.json \
+    --court 412,1820,3420,1830,2610,640,1240,636 --out work/pose.json --work work   # corners: near-L, near-R, far-R, far-L
+ocv-pose compare "spring/*.json:spring" "autumn/*.json:autumn" --kind forehand    # did my forehand change?
+```
+
+`pose.json` holds the strokes (kind, confidence, evidence, stance_deg, contact_cm, finish_cm, lean_cm, court position),
+contact `events` (verified only when audio and pose agree and the label passes the schema rules), `footwork`, and
+`syllables` (movement pieces with a 2-D map position). On macOS you can use `--backend apple-vision` instead. Details,
+assumptions and sources are in [docs/pose.md](docs/pose.md).
+
+### Player identification *(WIP)*
+
+See [docs/player_id.md](docs/player_id.md) for the 4-player identity tracker (`opencourtvision/players/`, optional extra `.[players]`). It uses court position, motion, clothing colour and an optional OSNet re-ID embedding. No faces. The Mac measurement tool is `tools/player_id/`. Pose and player-ID weight files are not in this repository; public pretrained weights are downloaded at runtime.
+
+Users are responsible for complying with the privacy and biometric laws that apply where they run this software, including getting consent from the people they film.
+
 ### Shell helpers
 
 ```bash
@@ -176,6 +202,8 @@ flowchart LR
 | `windows.py`, `stages.py` | hit windows, stage layout and content-hash stage cache |
 | `opencourtvision/reel/` | `ball.py`: detection, tracking, crop path, zoom, optional TrackNet. `reel.py`: moments → 9:16 reel |
 | `opencourtvision/ball/` | ball engine v2: TrackNetV3 (vendored MIT model), ROI/Kalman HSV tracker, size and court gates, live-ball filter, bounces, proxy metrics |
+| `opencourtvision/pose/` | keypoints, strokes, mechanics, footwork, syllables, comparisons (`ocv-pose`); see [docs/pose.md](docs/pose.md) |
+| `opencourtvision/players/` | 4-player identity tracking (court/motion/colour/re-ID cues); see [docs/player_id.md](docs/player_id.md) |
 | `opencourtvision/pipeline.py` | wires the stages for `ocv-swingcut` |
 | `opencourtvision/cli/` | thin argparse entry points |
 | `opencourtvision/synthetic.py` | synthetic clips for tests and benchmarks |
@@ -185,7 +213,7 @@ flowchart LR
 
 `python benchmarks/run_eval.py` generates synthetic clips (ffmpeg `testsrc` video plus decaying 2–5 kHz "pops"
 at known times over noise, with distractor thumps and chatter in the noisy clip) and reports hit precision, recall
-and F1 at ±50 ms, timing error, rally count, and match-start error. No real footage is used. Current output:
+and F1 at ±50 ms, timing error, rally count, and match-start error. No real footage is used. `python benchmarks/run_pose_eval.py` benchmarks stroke labelling and mechanics on synthetic stick figures. Current output:
 
 ```
 clip | gt_hits | detected | precision | recall | f1 | timing_err_ms_mean | timing_err_ms_max | gt_rallies | detected_rallies | detect_runtime_s
@@ -214,7 +242,7 @@ This snapshot is published so people can help. It is not a finished product.
 
 Other known weak spots include far-side and fast/blurry ball tracking, court calibration / homography after the camera is bumped, far-side player detection, and p(A) calibration. See the open issues labeled `help wanted`.
 
-How to film a match, including consent and the 18+ rule: [docs/filming.md](docs/filming.md). Pose analysis and player-ID / re-identification code are not part of this release.
+How to film a match, including consent and the 18+ rule: [docs/filming.md](docs/filming.md).
 
 Contact: antonyvo@mail.grokbot.com
 
@@ -227,7 +255,8 @@ Contact: antonyvo@mail.grokbot.com
 | Ball engine v2 | ROI tracker + TrackNetV3 re-acquire + live-ball filter. Public numbers are the synthetic detector bench only |
 | Point-winner scoring | Does not yet beat simple baselines on the held-out match; help wanted |
 | Label schema and `ocv eval` | Present; tested on synthetic data |
-| Pose analysis and player-ID | Not in this release |
+| Pose analysis | Included (`ocv-pose`); tested on synthetic data. See [docs/pose.md](docs/pose.md) |
+| Player-ID | Included (`opencourtvision/players/`); see [docs/player_id.md](docs/player_id.md). Weight files are not in the repo |
 | Padel, 4-player doubles tracking | Not started (see `ROADMAP.md`) |
 
 ## Roadmap

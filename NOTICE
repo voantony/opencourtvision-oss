@@ -20,8 +20,9 @@ not in this tree. This paragraph is pending review by counsel and is not itself 
 |---|---|---|---|
 | TrackNetV3 network definition | github.com/qaz812345/TrackNetV3 @ 6eda442, Copyright (c) 2024 qaz812345 | MIT | `opencourtvision/ball/_vendor/tracknetv3/` |
 | Bounce clean-up (ported) | github.com/philippdubach/tennis-vision @ a501953, Copyright (c) 2026 Philipp Dubach | MIT | `opencourtvision/ball/bounce.py`, `opencourtvision/ball/LICENSE.tennis-vision` |
+| OSNet network definition | github.com/KaiyangZhou/deep-person-reid @ f8cd150, Copyright (c) 2018 Kaiyang Zhou | MIT | `opencourtvision/players/_vendor/osnet/` |
 
-Player-ID and pose models are not part of this release. See `weights/MANIFEST.json`.
+OSNet weights trained on MSMT17 are a player-ID model and are not a v1 release asset. Pose model files (MediaPipe Pose Landmarker, Apple Vision) are downloaded at runtime and are not committed. See `weights/MANIFEST.json`.
 
 ## Fonts (not relicensed)
 

@@ -1,8 +1,8 @@
-"""ocv: umbrella command. `ocv eval ...`, `ocv swingcut ...`, `ocv match-start ...`, `ocv reel ...`, `ocv sv-audit ...`, `ocv highlights ...`, `ocv stages`."""
+"""ocv: umbrella command. `ocv eval ...`, `ocv swingcut ...`, `ocv match-start ...`, `ocv reel ...`, `ocv sv-audit ...`, `ocv highlights ...`, `ocv pose ...`, `ocv stages`."""
 import sys
 
 COMMANDS = {"eval": "eval", "swingcut": "swingcut", "match-start": "match_start", "reel": "reel", "sv-audit": "opencourtvision.importers.swingvision",
-            "highlights": "opencourtvision.story.highlight"}
+            "highlights": "opencourtvision.story.highlight", "pose": "pose"}
 
 
 def main(argv=None):

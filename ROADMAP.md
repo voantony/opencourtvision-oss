@@ -26,7 +26,7 @@
 Licence limits are lifted for development; every non-MIT/Apache item is logged for Legal in engineering notes §8. **Status (Oct 2026):** part 2 (ball) is built as ball engine v2
 (`opencourtvision/ball/`, branch `feature/engine-v2`): colour + motion candidates, size gate, ROI/Kalman search,
 TrackNetV3 re-acquire, audio-contact fusion and a live-ball filter, with proxy metrics in `ocv-bench-ball`. The
-acceptance metrics below still need labelled ball frames (`ocv-label-ball`). Part 1 (who's who / player-ID) and pose analysis are not part of this public snapshot.
+acceptance metrics below still need labelled ball frames (`ocv-label-ball`). Part 1 (who's who / player-ID) lives in `opencourtvision/players/` (see `docs/player_id.md`); pose analysis lives in `opencourtvision/pose/` (see `docs/pose.md`). Weights for those models are downloaded at runtime and are not committed.
 
 **1. Who's who in doubles**
 

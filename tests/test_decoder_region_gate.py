@@ -133,6 +133,12 @@ def test_us_artefact_has_zero_decoder_hits(tmp_path):
     assert r.returncode == 0 and "0 hit" in r.stdout
     assert not (out / "opencourtvision" / "scoring" / "decoder.py").exists()
     assert not (out / "opencourtvision" / "pose" / "syllables.py").exists()          # Legal 05:55
+    r2 = subprocess.run(
+        [sys.executable, "-c",
+         "from opencourtvision.pose import analyze; assert analyze._syllables() is None"],
+        cwd=str(out), capture_output=True, text=True, env={**os.environ, "PYTHONPATH": str(out)},
+    )
+    assert r2.returncode == 0, r2.stderr
     assert "viterbi" not in "".join(p.read_text().lower() for p in out.rglob("*.py"))
     assert (out / "opencourtvision" / "scoring" / "region_config.py").exists()
     src = "".join(p.read_text() for p in out.rglob("*.py"))

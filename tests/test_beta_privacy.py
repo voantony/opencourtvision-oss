@@ -74,6 +74,42 @@ def test_beta_eu_host_is_the_only_allowed_download(beta, monkeypatch, tmp_path):
 
 
 
+
+def _fake_mediapipe(monkeypatch, landmarker="landmarker"):
+    """Stub the optional mediapipe import so loader tests exercise privacy, not pip extras."""
+    mp = types.ModuleType("mediapipe")
+    mp.tasks = types.SimpleNamespace(
+        BaseOptions=lambda **k: object(),
+        vision=types.SimpleNamespace(
+            PoseLandmarkerOptions=lambda **k: object(),
+            RunningMode=types.SimpleNamespace(IMAGE="IMAGE"),
+            PoseLandmarker=types.SimpleNamespace(create_from_options=lambda opts: landmarker),
+        ),
+    )
+    monkeypatch.setitem(sys.modules, "mediapipe", mp)
+    return mp
+
+
+def test_pose_loader_fails_closed_in_beta(beta, monkeypatch):
+    from opencourtvision.pose import estimate as pe
+    _fake_mediapipe(monkeypatch)
+    with pytest.raises(privacy.BetaModelUnavailable):
+        pe.MediaPipeEstimator()
+    assert beta == []
+
+
+def test_pose_loader_uses_bundled_weights(beta, tmp_path, monkeypatch):
+    dest = tmp_path / "weights" / "mediapipe" / "pose_landmarker_full.task"
+    dest.parent.mkdir(parents=True)
+    dest.write_bytes(b"fake-pose")
+    monkeypatch.setenv("VAMOS_MODEL_DIR", str(tmp_path / "weights"))
+    from opencourtvision.pose import estimate as pe
+    _fake_mediapipe(monkeypatch)
+    est = pe.MediaPipeEstimator()
+    assert est._lm == "landmarker"
+    assert beta == []
+
+
 def test_tracknet_fetch_never_uses_google_drive_in_beta(beta, tmp_path):
     from opencourtvision.ball import tracknet3
     with pytest.raises(privacy.BetaModelUnavailable):

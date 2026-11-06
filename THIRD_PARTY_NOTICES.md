@@ -10,18 +10,26 @@ OpenCourtVision is AGPL-3.0-only. Third-party source that is vendored stays unde
 | TrackNetV3 network definition | github.com/qaz812345/TrackNetV3 @ 6eda442 (2026-09-03), Copyright (c) 2024 qaz812345 | MIT | `opencourtvision/ball/_vendor/tracknetv3/` (`model.py` unmodified, `LICENSE`) | `TrackNet` / `InpaintNet` modules. Pre/post-processing (median background, 512×288 input, heatmap blobs) reimplemented in `ball/tracknet3.py`. |
 | TrackNetV3 checkpoints (`TrackNet_best.pt`, `InpaintNet_best.pt`) | same repository (Google Drive link in its README) | MIT (repository licence; covers the released checkpoints) | **not in the repo**: downloaded at runtime by `ocv-fetch-weights tracknetv3` into `$OCV_CACHE/tracknetv3`, SHA-256 verified | Trained on badminton (shuttlecock) data; used for re-acquiring a lost ball. |
 | Bounce clean-up (court locality + ~400 ms temporal dedup) | github.com/philippdubach/tennis-vision @ a501953 (2026-05-01), `events/player_tracker.py::mask_ball_track_to_broadcast`, `events/court_filter.py`, Copyright (c) 2026 Philipp Dubach | MIT | `opencourtvision/ball/bounce.py::clean_bounces` (ported and adapted to our `CourtGate`), licence in `opencourtvision/ball/LICENSE.tennis-vision` | Drop bounces > 2 m outside the court; keep the earliest of bounces closer than 400 ms. |
+| OSNet network definition | github.com/KaiyangZhou/deep-person-reid @ f8cd150, Copyright (c) 2018 Kaiyang Zhou | MIT | `opencourtvision/players/_vendor/osnet/` (`osnet.py` unmodified, `LICENSE`) | Person re-ID backbone used by `opencourtvision/players/reid.py`. |
 
 ## Optional runtime dependencies
 
 | Package / asset | Licence | Used by | Notes |
 |---|---|---|---|
 | numpy, scipy | BSD-3-Clause | core | |
-| opencv-python | Apache-2.0 (OpenCV ≥ 4.5) | reel | |
+| opencv-python | Apache-2.0 (OpenCV ≥ 4.5) | reel, `ocv-pose extract` | |
 | mlx-whisper | MIT | `--stt` | |
 | torch | BSD-3-Clause | ball engine v2 (TrackNetV3), optional reel TrackNet | weights are downloaded at runtime, never committed |
 | gdown | MIT | `ocv-fetch-weights` (optional) | Google Drive download of the TrackNetV3 checkpoints; falls back to urllib |
+| mediapipe | Apache-2.0 | `ocv-pose` | Pose Landmarker model downloaded at runtime, never committed |
+| pyobjc-framework-Vision / Quartz | PSF-compatible | `ocv-pose --backend apple-vision` (macOS) | Apple Vision pose |
+| umap-learn | BSD-3-Clause | optional 2-D syllable map (`embed` extra) | |
+| OSNet `osnet_x1_0_msmt17` weights | MIT (upstream) | `opencourtvision/players/reid.py` | **not in the repo**: downloaded at runtime, never committed |
+| rfdetr | Apache-2.0 | `tools/player_id/pid_run.py` | pretrained COCO detector; not a release asset |
+| scikit-learn | BSD-3-Clause | `opencourtvision/players/learned.py` | optional learned cues |
+| Apple Vision (Swift) | Apple system framework | `tools/player_id/vision_crops.swift` | person instance masks and body pose on crops |
 
-keypoint-MoSeq (Harvard non-commercial licence) is not used. Player-ID and pose code and weights are not part of this release; see `weights/MANIFEST.json`.
+keypoint-MoSeq (Harvard non-commercial licence) is not used. Player-ID and pose weight files are not v1 release assets; see `weights/MANIFEST.json`.
 
 ## Ideas reimplemented (no code or data copied)
 
