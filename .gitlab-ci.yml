@@ -43,7 +43,7 @@ pages:
     CLIPS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/session-01-clips/1.0.0"
   script:
     - PYTHONPATH=. python3 scripts/build_pages.py --fetch-clips --clips-url "$CLIPS" --submit-enabled
-    - grep -q "submitEnabled: true," public/label/submit_config.js
+    - 'grep -q "submitEnabled: true," public/label/submit_config.js'
     - ls public/label/clips | wc -l
   pages: true
   artifacts:
