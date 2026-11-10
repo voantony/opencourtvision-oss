@@ -12,8 +12,10 @@
   var practice = [];
   var clips = [];
   var videos = [];
+  var device = "";
   var boardFile = null;
   var state = load();
+  var sessionCalls = 0;
 
   function load() {
     try {
@@ -50,6 +52,23 @@
   }
   function practiceIds() { return practice.map(function (p) { return p.id; }); }
 
+  function creditLine(videoId) {
+    var p = el("p", null, { class: "small credit", id: "credit" });
+    p.appendChild(document.createTextNode(R.creditLineText(videos, videoId, lang) + " "));
+    p.appendChild(el("a", lang === "es" ? "Cr\u00e9ditos" : "Credits", { href: "../CC_ATTRIBUTION.txt" }));
+    return p;
+  }
+
+  function refreshFooter() {
+    var a = document.getElementById("delete-data");
+    if (a) {
+      a.textContent = t("deleteData");
+      a.href = SUB.deleteMailto(state.nickname, device);
+    }
+    var note = document.getElementById("privacy-id");
+    if (note) note.textContent = t("privacyId");
+  }
+
   function headerCount(phase, index, total) {
     var key = phase === "warmup" ? "warmupCount" : "pointCount";
     return el("p", I18N.fill(t(key), { i: index + 1, n: total }), { class: "mono" });
@@ -69,12 +88,13 @@
     b.setAttribute("fill", "#C8F43C");
     svg.appendChild(a); svg.appendChild(b);
     row.appendChild(svg);
-    row.appendChild(el("span", streakLabel(), { class: "mono", id: "streak" }));
+    row.appendChild(el("span", String(sessionCalls), { class: "mono", id: "streak" }));
     return row;
   }
 
   function stage(file) {
     var box = el("div", null, { class: "stage", id: "stage" });
+    box.appendChild(el("p", t("clipLabel"), { class: "clip-label" }));
     var img = el("img", null, { class: "ph", id: "placeholder", src: "../assets/court.svg", alt: "" });
     var video = el("video", null, { id: "clip", playsinline: "", muted: "", controls: "" });
     video.hidden = true;
@@ -88,18 +108,6 @@
     box.appendChild(img);
     box.appendChild(video);
     return box;
-  }
-
-  function creditLine(videoId) {
-    var p = el("p", null, { class: "small credit", id: "credit" });
-    var v = null;
-    videos.forEach(function (x) { if (x.id === videoId) v = x; });
-    if (v) {
-      p.appendChild(document.createTextNode((lang === "es" ? "Fuente: \u201c" : "Source: \u201c") + v.title + "\u201d, " + v.channel + ", CC BY. "));
-    }
-    var a = el("a", lang === "es" ? "Cr\u00e9ditos" : "Credits", { href: "../CC_ATTRIBUTION.txt" });
-    p.appendChild(a);
-    return p;
   }
 
   function callButtons(onCall, locked, chosen) {
@@ -116,6 +124,7 @@
     fault.addEventListener("click", function () { onCall("F"); });
     wrap.appendChild(pair);
     wrap.appendChild(fault);
+    wrap.appendChild(el("p", t("faultSub"), { class: "small fault-sub", id: "fault-sub" }));
     return wrap;
   }
 
@@ -128,7 +137,7 @@
     nick.value = state.nickname;
     nick.placeholder = t("nickname");
     nick.setAttribute("aria-label", t("nickname"));
-    nick.addEventListener("input", function () { state.nickname = nick.value.trim(); save(); });
+    nick.addEventListener("input", function () { state.nickname = nick.value.trim(); save(); refreshFooter(); });
     var lab = el("label", null, { class: "check" });
     var box = el("input", null, { id: "adult", type: "checkbox" });
     box.checked = false;
@@ -152,33 +161,35 @@
     var boardLink = el("button", t("boardTitle"), { type: "button", class: "textlink", id: "open-board" });
     boardLink.addEventListener("click", showBoard);
     app.appendChild(boardLink);
+    refreshFooter();
   }
 
   function showWarmup(index, chosen) {
     var point = practice[index];
     clear();
     var head = el("div", null, { class: "point-head" });
-    head.appendChild(headerCount("warmup", index, practice.length));
     head.appendChild(flameRow());
+    head.appendChild(headerCount("warmup", index, practice.length));
     app.appendChild(head);
     app.appendChild(stage(point.file));
-    if (index === 0 && !chosen) app.appendChild(el("p", t("reminder"), { class: "reminder", id: "reminder" }));
-    var feedback = el("p", "", { class: "feedback", id: "feedback" });
-    var reason = el("p", "", { class: "small", id: "reason" });
-    app.appendChild(feedback);
-    app.appendChild(reason);
-    function paintWarm(call) {
-      var fb = R.playerFeedback("warmup", point, call, lang);
-      feedback.textContent = fb.text;
-      reason.textContent = fb.reason;
-    }
-    if (chosen) paintWarm(chosen);
-    app.appendChild(callButtons(function (call) {
-      if (chosen) return;
-      showWarmup(index, call);
-    }, !!chosen, chosen));
+    app.appendChild(creditLine(point.video_id));
     if (chosen) {
-      var next = el("button", index + 1 < practice.length ? t("next") : t("play"), { type: "button", class: "btn volt", id: "next" });
+      var fb = R.playerFeedback("warmup", point, chosen, lang);
+      var card = el("div", null, { class: "card feedback-card", id: "feedback-card" });
+      card.appendChild(el("p", fb.text, { class: fb.right ? "pill-ok" : "pill-bad", id: "feedback" }));
+      card.appendChild(el("p", fb.reason, { id: "reason" }));
+      card.appendChild(el("p", t("warmupTag"), { class: "small" }));
+      app.appendChild(card);
+    } else {
+      app.appendChild(el("p", t("legend"), { class: "legend", id: "legend" }));
+      app.appendChild(callButtons(function (call) {
+        sessionCalls += 1;
+        showWarmup(index, call);
+      }, false, null));
+      app.appendChild(el("p", t("warmupTag"), { class: "small warmup-tag" }));
+    }
+    if (chosen) {
+      var next = el("button", t("next"), { type: "button", class: "btn volt", id: "next" });
       next.addEventListener("click", function () {
         if (index + 1 < practice.length) showWarmup(index + 1, null);
         else beginRound();
@@ -189,10 +200,11 @@
       skip.addEventListener("click", beginRound);
       app.appendChild(skip);
     }
+    refreshFooter();
   }
 
   function beginRound() {
-    var picked = R.pickRound(clips, state.used, CFG.roundSize);
+    var picked = R.pickRound(clips, state.used, CFG.roundSize, practiceIds());
     if (picked.length < CFG.roundSize) {
       clear();
       app.appendChild(el("p", t("honest")));
@@ -222,11 +234,12 @@
     var clip = currentClip();
     clear();
     var head = el("div", null, { class: "point-head" });
-    head.appendChild(headerCount("live", pending.index, pending.ids.length));
     head.appendChild(flameRow());
+    head.appendChild(headerCount("live", pending.index, pending.ids.length));
     app.appendChild(head);
     app.appendChild(stage(clip.file));
     app.appendChild(creditLine(clip.video_id));
+    app.appendChild(el("p", t("legend"), { class: "legend", id: "legend" }));
     var feedback = el("p", "", { class: "feedback", id: "feedback" });
     var engine = el("p", "", { class: "engine", id: "engine", hidden: "" });
     app.appendChild(feedback);
@@ -242,6 +255,7 @@
       if (pending.calls[clip.id]) return;
       pending.calls[clip.id] = call;
       state.pointsCalled += 1;
+      sessionCalls += 1;
       if (state.used.indexOf(clip.id) < 0) state.used.push(clip.id);
       save();
       showLive(call);
@@ -255,6 +269,7 @@
       });
       app.appendChild(next);
     }
+    refreshFooter();
   }
 
   function finishRound() {
@@ -305,6 +320,7 @@
     var boardBtn = el("button", t("boardTitle"), { type: "button", class: "textlink", id: "open-board" });
     boardBtn.addEventListener("click", showBoard);
     app.appendChild(boardBtn);
+    refreshFooter();
   }
 
   function mailHref() {
@@ -316,7 +332,12 @@
   function postCalls() {
     if (!SUB.submitReady(FORM) || !state.pending) return;
     var calls = roundCalls();
-    var spec = SUB.encodeBody(FORM, { nickname: state.nickname, round_id: state.pending.round_id, calls: calls });
+    var spec = SUB.encodeBody(FORM, {
+      nickname: state.nickname,
+      round_id: state.pending.round_id,
+      calls: calls,
+      device_id: device
+    });
     fetch(spec.url, {
       method: "POST",
       mode: spec.mode,
@@ -376,11 +397,13 @@
     var back = el("button", t("back"), { type: "button", class: "textlink", id: "back-start" });
     back.addEventListener("click", showStart);
     app.appendChild(back);
+    refreshFooter();
   }
 
   function boot() {
     document.getElementById("lang-en").addEventListener("click", function () { lang = "en"; document.documentElement.lang = "en"; showStart(); });
     document.getElementById("lang-es").addEventListener("click", function () { lang = "es"; document.documentElement.lang = "es"; showStart(); });
+    device = SUB.ensureDeviceId(localStorage, function () { return crypto.randomUUID(); });
     if (new URLSearchParams(location.search).get("lang") === "es") lang = "es";
     var practiceP = fetch("practice.json", { cache: "no-cache", credentials: "omit" }).then(function (r) { return r.json(); });
     var clipsP = fetch("clips.json", { cache: "no-cache", credentials: "omit" }).then(function (r) { return r.json(); });

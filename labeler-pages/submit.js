@@ -24,6 +24,27 @@
     return JSON.stringify({ round_id: round.round_id, calls: calls });
   }
 
+  function deviceFieldActive(entry) {
+    return /^entry\.\d+$/.test(entry || "");
+  }
+
+  function ensureDeviceId(storage, randomUUID) {
+    var key = "ocv-device-id";
+    var cur = storage.getItem(key);
+    if (cur) return cur;
+    var id = randomUUID();
+    storage.setItem(key, id);
+    return id;
+  }
+
+  function deleteMailto(nickname, deviceId) {
+    var body = "I want anything I've shared with the OpenCourtVision / Vamos maintainers deleted.\n\n"
+      + "nickname: " + (nickname || "") + "\n"
+      + "device_id: " + deviceId + "\n";
+    return "mailto:antonyvo@mail.grokbot.com?subject=" + encodeURIComponent("Delete my labels")
+      + "&body=" + encodeURIComponent(body);
+  }
+
   function encodeBody(config, round) {
     var json = callsJson(round);
     if (json.length > 2000) throw new Error("batch over 2000 characters");
@@ -34,16 +55,19 @@
       if (seen[key]) throw new Error("duplicate form field");
       seen[key] = true;
     });
+    var sendDevice = deviceFieldActive(fields.deviceId) && round.device_id;
+    if (sendDevice && seen[fields.deviceId]) throw new Error("duplicate form field");
     var params = new URLSearchParams();
     params.set(fields.nickname, round.nickname);
     params.set(fields.calls, json);
     params.set(fields.adult18, config.adult18Value);
     params.set(fields.clientVersion, config.clientVersion);
+    if (sendDevice) params.set(fields.deviceId, round.device_id);
     var body = params.toString();
     var parsed = new URLSearchParams(body);
     var keys = [];
     parsed.forEach(function (_v, k) { keys.push(k); });
-    if (keys.length !== 4) throw new Error("payload has extra fields");
+    if (keys.length !== (sendDevice ? 5 : 4)) throw new Error("payload has extra fields");
     FIELD_ORDER.forEach(function (name) {
       if (keys.indexOf(fields[name]) < 0) throw new Error("missing field");
     });
@@ -76,6 +100,9 @@
     encodeBody: encodeBody,
     issueUrl: issueUrl,
     mailtoUrl: mailtoUrl,
+    deviceFieldActive: deviceFieldActive,
+    ensureDeviceId: ensureDeviceId,
+    deleteMailto: deleteMailto,
     FIELD_ORDER: FIELD_ORDER
   };
 });

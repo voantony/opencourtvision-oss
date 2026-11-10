@@ -2,7 +2,21 @@
 #app > .btn { width: 100%; margin-top: 8px; }
 .stack { display: flex; flex-direction: column; gap: 10px; align-items: stretch; }
 .pair { width: 100%; }
-.pair .btn { width: 100%; min-height: 52px; font-size: 1.15rem; }
+.pair .btn { width: 100%; min-height: 52px; font-size: 1.15rem; border-color: var(--volt); background: transparent; }
+.legend, .fault-sub, .warmup-tag, .clip-label { text-align: center; color: var(--mist); }
+.clip-label { margin: 8px 0 0; font-size: 0.85rem; }
+.feedback-card { text-align: center; margin-top: 12px; }
+.pill-ok, .pill-bad {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  margin: 0 auto 8px;
+}
+.pill-ok { background: var(--volt); color: var(--night); }
+.pill-bad { border: 1px solid var(--mist); color: var(--chalk); }
 .reminder { color: var(--mist); }
 .engine { color: var(--chalk); }
 .board-head { display: flex; justify-content: space-between; gap: 12px; color: var(--mist); font-size: 0.85rem; margin-top: 12px; }

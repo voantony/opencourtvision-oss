@@ -8,7 +8,7 @@
     fourfive: [1080, 1350],
     story: [1080, 1920]
   };
-  var HOST = "antonyvo.gitlab.io/opencourtvision";
+  var HOST = "https://opencourtvision-10a09b.gitlab.io";
 
   function cardCopy(i18n, lang, n, grade) {
     var t = i18n.t(lang, "shareLine");
@@ -23,9 +23,6 @@
     var blob = JSON.stringify(model).toLowerCase();
     if (blob.indexOf("accuracy") >= 0 || blob.indexOf("prize") >= 0 || blob.indexOf("premio") >= 0) {
       throw new Error("share card must not mention accuracy or prizes");
-    }
-    if (model.host.indexOf("https://") === 0 || model.host.indexOf("http://") === 0) {
-      throw new Error("share host is text only");
     }
     return model;
   }

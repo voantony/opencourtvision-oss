@@ -71,7 +71,7 @@ def enable_submit(public: Path) -> None:
     text = path.read_text(encoding="utf-8")
     if text.count("submitEnabled: false,") != 1:
         raise SystemExit("submit_config.js: expected exactly one 'submitEnabled: false,'")
-    path.write_text(text.replace("submitEnabled: false,", "submitEnabled: true,"), encoding="utf-8")
+    path.write_text(text.replace("submitEnabled: false,", "submitEnabled: true,", 1), encoding="utf-8")
 
 
 def fetch_clips(public: Path, clips_url: str) -> None:

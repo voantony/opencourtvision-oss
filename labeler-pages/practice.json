@@ -1,35 +1,34 @@
 {
   "schema": "ocv.practice.v1",
-  "session": "practice-synthetic-example",
-  "draft": true,
-  "note": "SYNTHETIC EXAMPLE ONLY. Not session-02. Not taken from a check, gold, or private-test match. The warm-up stays synthetic until session-02 practice points exist.",
+  "session": "session-01-warmup",
+  "note": "Public CC BY warm-up from Amateur Padel (2p6PcKP0720). These three clips are not part of a round, scoring, or the human baseline. The engine line is not shown on warm-up.",
   "points": [
     {
-      "id": "synth-practice-1",
-      "video_id": "synthetic-practice-match",
-      "file": "clips/synthetic-practice-1.mp4",
+      "id": "2p6PcKP0720_p4",
+      "video_id": "2p6PcKP0720",
+      "file": "clips/2p6PcKP0720_4.mp4",
       "answer": "A",
-      "engine": "B",
-      "reason_en": "The near side hit a clean winner.",
-      "reason_es": "El lado cercano cerró con un ganador limpio."
+      "a_side_team": "A",
+      "reason_en": "The far side's volley goes straight into the net, so the near side wins the point.",
+      "reason_es": "La volea del lado lejano se va directa a la red, así que punto para el lado cercano."
     },
     {
-      "id": "synth-practice-2",
-      "video_id": "synthetic-practice-match",
-      "file": "clips/synthetic-practice-2.mp4",
-      "answer": "B",
-      "engine": "B",
-      "reason_en": "The far side's return landed in.",
-      "reason_es": "El resto del lado lejano cayó dentro."
-    },
-    {
-      "id": "synth-practice-3",
-      "video_id": "synthetic-practice-match",
-      "file": "clips/synthetic-practice-3.mp4",
+      "id": "2p6PcKP0720_p3",
+      "video_id": "2p6PcKP0720",
+      "file": "clips/2p6PcKP0720_3.mp4",
       "answer": "F",
-      "engine": "A",
-      "reason_en": "The serve hit the net. That is a fault serve.",
-      "reason_es": "El saque dio en la red. Es una falta de saque."
+      "a_side_team": "A",
+      "reason_en": "Let: the serve clipped the net and landed in, so it's replayed and no point is scored.",
+      "reason_es": "Let: el saque toca la red y entra, se repite y no hay punto."
+    },
+    {
+      "id": "2p6PcKP0720_p5",
+      "video_id": "2p6PcKP0720",
+      "file": "clips/2p6PcKP0720_5.mp4",
+      "answer": "B",
+      "a_side_team": "A",
+      "reason_en": "The near side's smash goes into the net, so the far side wins the point.",
+      "reason_es": "El remate del lado cercano se va a la red, así que punto para el lado lejano."
     }
   ]
 }

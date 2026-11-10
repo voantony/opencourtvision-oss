@@ -2,9 +2,12 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 import subprocess
 from html.parser import HTMLParser
 from pathlib import Path
+
+from opencourtvision.labels.call_game import to_team_call
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -14,8 +17,8 @@ def build(public):
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module.build(public)
-OLD_HOST = "opencourtvision-10a09b.gitlab.io"
-PAGES_HOST = "antonyvo.gitlab.io"
+LIVE_HOST = "https://opencourtvision-10a09b.gitlab.io"
+UNAPPROVED_HOST = "antonyvo.gitlab.io"
 
 
 class Links(HTMLParser):
@@ -52,25 +55,52 @@ def test_built_site_shape(tmp_path):
     assert "Graba un partido" in es
     assert "Beat the Engine" in es
     blob = "\n".join(path.read_text(encoding="utf-8", errors="ignore")
-                     for path in public.rglob("*") if path.is_file() and path.suffix in {".html", ".js", ".css", ".json"})
-    assert OLD_HOST not in blob
+                     for path in public.rglob("*") if path.is_file() and path.suffix in {".html", ".js", ".css", ".json", ".txt"})
+    assert UNAPPROVED_HOST not in blob
+    assert LIVE_HOST in (public / "label" / "share.js").read_text(encoding="utf-8")
+    assert (public / "CC_ATTRIBUTION.txt").is_file()
     for href in parser.hrefs:
-        assert PAGES_HOST not in href
+        assert UNAPPROVED_HOST not in href
         assert not href.startswith("/label")
     assert 'href="label/"' in label or 'href="../index.html"' in label
     clips = (public / "label" / "clips.json").read_text(encoding="utf-8")
     assert '"answer"' not in clips
     practice = (public / "label" / "practice.json").read_text(encoding="utf-8")
-    assert "synthetic-practice-match" in practice
+    assert "2p6PcKP0720_p4" in practice and "2p6PcKP0720_p3" in practice and "2p6PcKP0720_p5" in practice
 
 
-def test_no_old_host_in_source():
-    for path in (ROOT / "site").rglob("*"):
-        if path.is_file() and path.suffix in {".html", ".css", ".js", ".svg"}:
-            assert OLD_HOST not in path.read_text(encoding="utf-8", errors="ignore")
-    text = (ROOT / "labeler-pages" / "app.js").read_text(encoding="utf-8")
-    assert "document.cookie" not in text
-    assert "issues/new" not in text
+def test_delete_link_on_footer_and_every_game_screen():
+    for name in ("index.html", "es.html"):
+        text = (ROOT / "site" / name).read_text(encoding="utf-8")
+        assert 'id="delete-data"' in text.split("<footer", 1)[1]
+        assert "mailto:antonyvo@mail.grokbot.com?subject=Delete%20my%20labels" in text
+    label = (ROOT / "labeler-pages" / "index.html").read_text(encoding="utf-8")
+    main, footer = label.split('<main id="app">', 1)[1].split("</main>", 1)
+    assert "delete-data" not in main
+    assert 'id="delete-data"' in footer
+    assert "mailto:antonyvo@mail.grokbot.com?subject=Delete%20my%20labels" in footer
+    app = (ROOT / "labeler-pages" / "app.js").read_text(encoding="utf-8")
+    assert "document.cookie" not in app
+    for fn in ("showStart", "showWarmup", "showLive", "showSummary", "showBoard"):
+        body = app.split("function " + fn, 1)[1].split("\n  function ", 1)[0]
+        assert "refreshFooter()" in body
+
+
+def test_ends_mapping_and_no_answers_on_clips():
+    clips = json.loads((ROOT / "labeler-pages" / "clips.json").read_text(encoding="utf-8"))["clips"]
+    by = {c["id"]: c for c in clips}
+    far = {"GKWNVYeEAlE_p11", "GKWNVYeEAlE_p12"}
+    others = [c for c in clips if c["video"] in ("GKWNVYeEAlE", "632k3fKraeA") and c["id"] not in far]
+    assert len(others) == 39
+    for clip in others:
+        assert to_team_call("A", clip["a_side_team"]) == "A"
+        assert to_team_call("B", clip["a_side_team"]) == "B"
+    for cid in far:
+        assert to_team_call("A", by[cid]["a_side_team"]) == "B"
+        assert to_team_call("B", by[cid]["a_side_team"]) == "A"
+    for clip in clips:
+        assert "answer" not in clip
+        assert clip["file"] == "clips/" + clip["id"].replace("_p", "_") + ".mp4"
 
 
 def test_node_client_rules():

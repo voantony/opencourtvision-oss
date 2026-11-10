@@ -5,8 +5,8 @@ import json
 import subprocess
 from pathlib import Path
 
-from opencourtvision.labels.call_game import GRADES, grade_for, leaderboard
-from opencourtvision.labels.leak_guard import LeakError, assert_whole_match_disjoint, discover_holdouts
+from opencourtvision.labels.call_game import GRADES, grade_for, leaderboard, playable_clips, to_team_call, training_rows
+from opencourtvision.labels.leak_guard import LeakError, assert_warmup_not_counted, assert_whole_match_disjoint, discover_holdouts
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -44,6 +44,41 @@ def test_practice_whole_match_rule():
         assert "same match" in str(exc)
     else:
         raise AssertionError("shared source video must fail")
+
+
+def test_warmup_clips_stay_out_of_rounds_and_scoring():
+    practice = json.loads((ROOT / "labeler-pages" / "practice.json").read_text(encoding="utf-8"))["points"]
+    clips = json.loads((ROOT / "labeler-pages" / "clips.json").read_text(encoding="utf-8"))["clips"]
+    warm = [p["id"] for p in practice]
+    assert warm == ["2p6PcKP0720_p4", "2p6PcKP0720_p3", "2p6PcKP0720_p5"]
+    assert [p["answer"] for p in practice] == ["A", "F", "B"]
+    assert practice[1]["reason_en"].startswith("Let: the serve clipped the net")
+    assert practice[1]["reason_es"] == "Let: el saque toca la red y entra, se repite y no hay punto."
+    playable = playable_clips(clips, warm)
+    playable_ids = [c["id"] for c in playable]
+    assert playable_ids[:2] == ["2p6PcKP0720_p1", "2p6PcKP0720_p2"]
+    assert len(clips) == 46 and len(playable) == 43
+    assert not set(warm).intersection(playable_ids)
+    assert to_team_call("A", "A") == "A"
+    assert to_team_call("A", "B") == "B"
+    assert to_team_call("F", "A") == "F"
+    calls = [
+        {"point_id": "2p6PcKP0720_p4", "call": "A"},
+        {"point_id": "2p6PcKP0720_p1", "call": "B"},
+        {"point_id": "632k3fKraeA_p1", "call": "A"},
+    ]
+    rows = training_rows(calls, clips, warm)
+    by_row = {r["point_id"]: r for r in rows}
+    assert "2p6PcKP0720_p4" not in by_row
+    assert by_row["2p6PcKP0720_p1"]["team_call"] == "B"
+    assert by_row["632k3fKraeA_p1"]["team_call"] == "A"
+    assert_warmup_not_counted(warm, [c["id"] for c in playable], [r["point_id"] for r in rows])
+    try:
+        assert_warmup_not_counted(warm, ["2p6PcKP0720_p4"], [])
+    except LeakError:
+        pass
+    else:
+        raise AssertionError("a warm-up id in a round must fail")
 
 
 def test_export_script_rejects_shared_match(tmp_path):

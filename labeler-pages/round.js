@@ -29,16 +29,32 @@
     return "—";
   }
 
+  function creditLineText(videos, videoId, lang) {
+    var v = null;
+    (videos || []).forEach(function (x) { if (x.id === videoId) v = x; });
+    if (!v) return "";
+    var lead = lang === "es" ? "Fuente: \u201c" : "Source: \u201c";
+    return lead + v.title + "\u201d, " + v.channel + ", CC BY.";
+  }
+
+  function knownEnds(clip) {
+    return !!(clip && (clip.a_side_team === "A" || clip.a_side_team === "B"));
+  }
+
+  function toTeamCall(call, aSideTeam) {
+    if (call === "F") return "F";
+    if (aSideTeam !== "A" && aSideTeam !== "B") return null;
+    if (call !== "A" && call !== "B") return null;
+    return aSideTeam === "A" ? call : (call === "A" ? "B" : "A");
+  }
+
   function playerFeedback(phase, point, call, lang) {
     if (phase === "warmup") {
-      var name = answerWord(point && point.answer, lang);
       var right = call === (point && point.answer);
-      var text = right
-        ? (lang === "es" ? "Bien, era " + name + "." : "Right, it was " + name + ".")
-        : (lang === "es" ? "Era " + name + "." : "It was " + name + ".");
       return {
         showEngine: false,
-        text: text,
+        right: right,
+        text: right ? (lang === "es" ? "Correcto" : "Correct") : (lang === "es" ? "Incorrecto" : "Incorrect"),
         reason: lang === "es" ? ((point && point.reason_es) || "") : ((point && point.reason_en) || "")
       };
     }
@@ -55,7 +71,8 @@
       id: point.id,
       file: point.file || "",
       video_id: videoOf(point),
-      engine: present(point).engine
+      engine: present(point).engine,
+      a_side_team: knownEnds(point) ? point.a_side_team : null
     };
     return out;
   }
@@ -66,13 +83,15 @@
     return pa.engine === pb.engine && pa.verdict === pb.verdict && pointClasses(a) === pointClasses(b);
   }
 
-  function pickRound(clips, used, size) {
+  function pickRound(clips, used, size, warmupIds) {
     var skip = {};
     (used || []).forEach(function (id) { skip[id] = true; });
+    (warmupIds || []).forEach(function (id) { skip[id] = true; });
     var out = [];
     (clips || []).forEach(function (clip) {
       if (out.length >= size) return;
-      if (!skip[clip.id]) out.push(sanitizeClip(clip));
+      if (skip[clip.id] || !knownEnds(clip)) return;
+      out.push(sanitizeClip(clip));
     });
     return out;
   }
@@ -151,6 +170,9 @@
     pointClasses: pointClasses,
     liveFeedback: liveFeedback,
     answerWord: answerWord,
+    creditLineText: creditLineText,
+    knownEnds: knownEnds,
+    toTeamCall: toTeamCall,
     playerFeedback: playerFeedback,
     sanitizeClip: sanitizeClip,
     sameFace: sameFace,

@@ -41,6 +41,17 @@ def points_in(data) -> list[dict]:
     return found
 
 
+def assert_warmup_not_counted(warmup_ids, round_ids, scored_ids) -> None:
+    """Warm-up clip ids never enter a round and are never scored or baselined."""
+    warm = {str(i) for i in warmup_ids}
+    in_round = sorted(warm.intersection(str(i) for i in round_ids))
+    if in_round:
+        raise LeakError("warm-up ids in a round: " + ", ".join(in_round))
+    counted = sorted(warm.intersection(str(i) for i in scored_ids))
+    if counted:
+        raise LeakError("warm-up ids counted: " + ", ".join(counted))
+
+
 def assert_whole_match_disjoint(practice: list[dict], holdouts: list[dict]) -> None:
     """Fail when a warm-up point shares an id or a source video with a held-out point."""
     hold_ids = {p["id"] for p in holdouts}

@@ -87,46 +87,41 @@ def main():
                 print(" load", url[len(base):])
             measure.close()
 
-            page = browser.new_page(viewport={"width": 390, "height": 844})
-            block_remote(page)
-            page.goto(base + "/label/", wait_until="networkidle")
-            page.evaluate("document.fonts.ready")
-            page.wait_for_selector("#play")
-            shot(page, "game-start.png")
-            page.locator("#adult").check()
-            page.locator("#play").click()
-            page.locator("[data-call='B']").click()
-            page.wait_for_selector("#reason")
-            shot(page, "game-warmup.png")
-            # Finish the 3-point warm-up, then stop on live point 3 of 10.
-            page.locator("#next").click()
-            page.locator("[data-call='A']").click()
-            page.locator("#next").click()
-            page.locator("[data-call='A']").click()
-            page.locator("#next").click()
-            page.locator("[data-call='A']").click()
-            page.locator("#next").click()
-            page.locator("[data-call='A']").click()
-            page.locator("#next").click()
-            assert "Point 3 of 10" in page.locator(".mono").first.inner_text()
-            shot(page, "game-point.png")
-            # Points 3 through 10, then the summary.
-            for i in range(8):
+            def warmup_shots(es):
+                suffix = "es" if es else "en"
+                page = browser.new_page(viewport={"width": 390, "height": 844})
+                block_remote(page)
+                page.goto(base + "/label/", wait_until="networkidle")
+                page.evaluate("document.fonts.ready")
+                page.wait_for_selector("#play")
+                if es:
+                    page.locator("#lang-es").click()
+                else:
+                    shot(page, "game-start.png")
+                page.locator("#adult").check()
+                page.locator("#play").click()
+                page.wait_for_selector("#legend")
+                shot(page, f"game-point-{suffix}.png")
+                if not es:
+                    shot(page, "game-point.png")
                 page.locator("[data-call='A']").click()
+                page.wait_for_selector("#reason")
+                assert "engine" not in page.locator("#feedback-card").inner_text().lower()
+                shot(page, f"game-warmup-p4-{suffix}.png")
+                if not es:
+                    shot(page, "game-warmup.png")
                 page.locator("#next").click()
-            page.wait_for_selector("#sum-count")
-            assert "10 points called" in page.locator("#sum-count").inner_text()
-            shot(page, "game-summary.png")
-            four = page.evaluate("""() => {
-              document.getElementById('share').click();
-              const canvases = [...document.querySelectorAll('canvas')].map(c => [c.width, c.height]);
-              return canvases;
-            }""")
-            assert four == [[1080, 1350], [1080, 1920]], four
-            page.locator("#open-board").click()
-            page.wait_for_selector("#board")
-            shot(page, "game-leaderboard.png")
-            page.close()
+                page.locator("[data-call='F']").click()
+                page.wait_for_selector("#reason")
+                shot(page, f"game-warmup-p3-{suffix}.png")
+                page.locator("#next").click()
+                page.locator("[data-call='B']").click()
+                page.wait_for_selector("#reason")
+                shot(page, f"game-warmup-p5-{suffix}.png")
+                page.close()
+
+            warmup_shots(False)
+            warmup_shots(True)
             browser.close()
     finally:
         httpd.shutdown()

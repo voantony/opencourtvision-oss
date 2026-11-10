@@ -12,7 +12,8 @@
       nickname: "entry.343297185",
       calls: "entry.787571459",
       adult18: "entry.1118633972",
-      clientVersion: "entry.1163912343"
+      clientVersion: "entry.1163912343",
+      deviceId: "entry.806055965"
     },
     adult18Value: "I'm 18 or older",
     clientVersion: "2026.11.10"

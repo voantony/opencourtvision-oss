@@ -55,5 +55,6 @@ pages:
         - site/**/*
         - labeler-pages/**/*
         - scripts/build_pages.py
+        - scripts/check_no_media.py
         - docs/CC_ATTRIBUTION.md
         - .gitlab-ci.yml
