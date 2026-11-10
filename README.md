@@ -267,6 +267,24 @@ See [ROADMAP.md](ROADMAP.md). Third-party licences: [THIRD_PARTY_NOTICES.md](THI
 
 [CONTRIBUTING.md](CONTRIBUTING.md). Security issues (please do not file them in public): [SECURITY.md](SECURITY.md).
 
+## Contributors and credits
+
+Code and labels are credited by the handle the person chooses, and only if they opt in. A GitLab username in a merge request or a `labels.json` is how we know who sent the work. It is not automatic public credit. We never list a legal name, email, or face.
+
+**Code.** Accepted merge requests show up in the git history (DCO sign-off, see [CONTRIBUTING.md](CONTRIBUTING.md)). Opt-in code contributors are listed below, by GitLab handle.
+
+<!-- Maintainers: add a handle here only after the contributor has said yes, in the MR or by email. -->
+
+**Labelers.** Public CC0 and CC BY points are labelled by volunteers and by the maintainers. To be named, say so when you send the file (a line in the issue comment, the merge request, or the JSON, such as `"credit_as": "your-handle"`). If you say nothing, we still use the labels and we do not put your handle on a credits list.
+
+**Dataset releases.** Each public label set ships with:
+
+- the CC0 / CC BY source blocks already kept in [docs/CC_ATTRIBUTION.md](docs/CC_ATTRIBUTION.md) (title, author, URL, licence, sha256, access date — whatever the licence asks for, and a source line even for CC0)
+- a short labeler list of opt-in handles and how many accepted points they contributed
+- no private-match labels, no footage, and no real names of people on court
+
+How to label, and what we collect (username and A/B/S answers only): [docs/LABELING.md](docs/LABELING.md). To have your labels or credit line removed, open a confidential issue with the Delete my data template or email antonyvo@mail.grokbot.com.
+
 ## Contact
 
 Antony Vo, antonyvo@mail.grokbot.com
