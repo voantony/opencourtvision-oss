@@ -16,6 +16,8 @@ EXTS = {
     ".svg", ".ico", ".mp4", ".mov", ".webm", ".avi", ".mkv", ".m4v",
 }
 SKIP_DIRS = {".git", ".venv", "venv", "__pycache__", ".pytest_cache", ".ruff_cache", "node_modules", ".build"}
+# Hand-written vector brand marks for the Pages homepage. Exact paths only; no raster or embedded data.
+ALLOWED_SVG = {"site/assets/c-bang-mark.svg", "site/assets/court.svg"}
 LFS_MARK = b"version https://git-lfs.github.com/spec/v1"
 
 
@@ -73,6 +75,13 @@ def scan(root: str):
                     head = f.read(512)
             except OSError as exc:
                 hits.append(f"{rel}: unreadable ({exc})")
+                continue
+            if rel.replace(os.sep, "/") in ALLOWED_SVG:
+                with open(path, "rb") as f:
+                    body = f.read().lower()
+                if b"<image" not in body and b"data:" not in body and b"href" not in body:
+                    continue
+                hits.append(f"{rel}: allowed svg embeds an image or link")
                 continue
             kind = _kind(head, name)
             if not kind:

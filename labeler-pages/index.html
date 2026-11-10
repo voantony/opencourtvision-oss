@@ -3,80 +3,34 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; media-src 'self'; connect-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; media-src 'self'; connect-src 'self' https://docs.google.com; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
-<link rel="icon" href="data:,">
+<link rel="icon" href="../assets/c-bang-mark.svg">
+<link rel="stylesheet" href="../home.css">
 <link rel="stylesheet" href="style.css">
-<title>OpenCourtVision: label padel points</title>
+<title>Call the Point</title>
 </head>
 <body>
-<header>
-  <h1>Label padel points</h1>
-  <p>OpenCourtVision volunteer labeler, session-01: 46 short clips from public CC BY padel matches. Watch each point and pick who won it and who served.</p>
+<div class="wrap">
+<header class="top">
+  <a class="brand" href="../index.html">
+    <img src="../assets/c-bang-mark.svg" alt="" width="36" height="36">
+    <span class="wordmark"><span class="bang">¡</span>VAMOS<span class="bang">!</span></span>
+  </a>
+  <nav class="nav" aria-label="Language">
+    <button type="button" id="lang-en" class="textlink">EN</button>
+    <span aria-hidden="true">|</span>
+    <button type="button" id="lang-es" class="textlink">ES</button>
+  </nav>
 </header>
-
-<main>
-<section id="intro">
-  <h2>How it works</h2>
-  <ul>
-    <li><b>A</b> is the team on the near side (closest to the camera) in the first clip of each match. Teams swap ends during a match, so follow the shirts.</li>
-    <li><b>S</b> means skip or unclear: you can't tell who won, it isn't a real point, or the clip only shows a fault serve.</li>
-    <li>Server is the team that served the point. Leave it as "not sure" if you can't tell.</li>
-    <li>Keys: <kbd>A</kbd> <kbd>B</kbd> <kbd>S</kbd> for the winner, <kbd>1</kbd> server A, <kbd>2</kbd> server B, <kbd>0</kbd> server not sure, <kbd>R</kbd> replay, <kbd>←</kbd> <kbd>→</kbd> previous / next.</li>
-  </ul>
-  <label for="user">Your GitLab username (no email address)</label>
-  <input id="user" autocomplete="off" spellcheck="false" maxlength="255" placeholder="e.g. jane_doe">
-  <p id="user-err" class="err" hidden>Use letters, numbers, dots, dashes or underscores only.</p>
-</section>
-
-<section id="labeler">
-  <div id="progress"></div>
-  <video id="clip" controls muted playsinline preload="auto"></video>
-  <div class="row">
-    <button id="replay" type="button">Replay (R)</button>
-    <label>Speed <select id="speed"><option value="1">1×</option><option value="0.5">0.5×</option><option value="0.25">0.25×</option></select></label>
-  </div>
-  <fieldset><legend>Who won the point?</legend>
-    <button type="button" class="win" data-v="A">A (near at start)</button>
-    <button type="button" class="win" data-v="B">B</button>
-    <button type="button" class="win" data-v="S">S (skip / unclear)</button>
-  </fieldset>
-  <fieldset><legend>Who served?</legend>
-    <button type="button" class="srv" data-v="A">A</button>
-    <button type="button" class="srv" data-v="B">B</button>
-    <button type="button" class="srv" data-v="">Not sure</button>
-  </fieldset>
-  <div class="row">
-    <button id="prev" type="button">← Previous</button>
-    <button id="next" type="button">Next →</button>
-  </div>
-  <p id="credit" class="small"></p>
-</section>
-
-<section id="send">
-  <h2>Send your answers</h2>
-  <p id="done-count"></p>
-  <div class="row">
-    <button id="download" type="button">Download labels.json</button>
-    <button id="issue" type="button">Open a pre-filled GitLab issue</button>
-  </div>
-  <p class="small">The issue button opens a new <b>confidential</b> issue on gitlab.com/antonyvo/opencourtvision with your answers filled in. Sign in to GitLab, check it, and press "Create issue". Nothing is sent until you do. You can also attach labels.json to an issue yourself.</p>
-</section>
-
-<section id="privacy">
-  <h2>Privacy</h2>
-  <p>This page collects only your GitLab username and your answers. They stay in this browser (local storage) until you download or send them. There are no cookies, no analytics, and no trackers, and the page loads nothing from other sites.</p>
-  <p>To delete labels you have sent, open a <a href="https://gitlab.com/antonyvo/opencourtvision/-/issues/new?issuable_template=Delete_my_data" rel="noopener noreferrer">confidential delete-my-data issue</a> or email <a href="mailto:antonyvo@mail.grokbot.com?subject=Delete%20my%20labels">antonyvo@mail.grokbot.com</a>.</p>
-  <button id="clear" type="button">Clear my answers from this browser</button>
-</section>
-
-<section id="credits">
-  <h2>Credits</h2>
-  <p>Clips are cut from these YouTube videos under the Creative Commons Attribution licence (CC BY). Changes: cut into short clips, scaled to 480p, re-encoded, audio removed. Full list with checksums: <a href="https://gitlab.com/antonyvo/opencourtvision/-/blob/main/docs/CC_ATTRIBUTION.md" rel="noopener noreferrer">docs/CC_ATTRIBUTION.md</a>.</p>
-  <ul id="credit-list"></ul>
-  <p class="small">OpenCourtVision is AGPL-3.0. Source: <a href="https://gitlab.com/antonyvo/opencourtvision" rel="noopener noreferrer">gitlab.com/antonyvo/opencourtvision</a>.</p>
-</section>
-</main>
+<main id="app"></main>
+</div>
+<script src="game_config.js"></script>
+<script src="i18n.js"></script>
+<script src="round.js"></script>
+<script src="submit.js"></script>
+<script src="submit_config.js"></script>
+<script src="share.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

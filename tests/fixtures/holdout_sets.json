@@ -1,0 +1,29 @@
+{
+  "check": [
+    {
+      "id": "hold-check-1",
+      "video_id": "holdout-match-check",
+      "answer": "A",
+      "answer_token": "HOLD_ANSWER_CHECK_7c1e",
+      "engine": "B"
+    }
+  ],
+  "gold": [
+    {
+      "id": "hold-gold-1",
+      "video_id": "holdout-match-gold",
+      "answer": "B",
+      "answer_token": "HOLD_ANSWER_GOLD_7c1e",
+      "engine": "A"
+    }
+  ],
+  "private_test": [
+    {
+      "id": "hold-private-1",
+      "video_id": "holdout-match-private",
+      "answer": "F",
+      "answer_token": "HOLD_ANSWER_PRIVATE_7c1e",
+      "engine": "F"
+    }
+  ]
+}

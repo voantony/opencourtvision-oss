@@ -1,0 +1,35 @@
+{
+  "schema": "ocv.practice.v1",
+  "session": "practice-synthetic-example",
+  "draft": true,
+  "note": "SYNTHETIC EXAMPLE ONLY. Not session-02. Not taken from a check, gold, or private-test match. The warm-up stays synthetic until session-02 practice points exist.",
+  "points": [
+    {
+      "id": "synth-practice-1",
+      "video_id": "synthetic-practice-match",
+      "file": "clips/synthetic-practice-1.mp4",
+      "answer": "A",
+      "engine": "B",
+      "reason_en": "The near side hit a clean winner.",
+      "reason_es": "El lado cercano cerró con un ganador limpio."
+    },
+    {
+      "id": "synth-practice-2",
+      "video_id": "synthetic-practice-match",
+      "file": "clips/synthetic-practice-2.mp4",
+      "answer": "B",
+      "engine": "B",
+      "reason_en": "The far side's return landed in.",
+      "reason_es": "El resto del lado lejano cayó dentro."
+    },
+    {
+      "id": "synth-practice-3",
+      "video_id": "synthetic-practice-match",
+      "file": "clips/synthetic-practice-3.mp4",
+      "answer": "F",
+      "engine": "A",
+      "reason_en": "The serve hit the net. That is a fault serve.",
+      "reason_es": "El saque dio en la red. Es una falta de saque."
+    }
+  ]
+}

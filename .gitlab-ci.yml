@@ -1,5 +1,5 @@
-# Tests for the AGPL snapshot, plus the static volunteer labeler on GitLab Pages.
-# The Pages job copies the HTML/JS and fetches the CC BY clips from the generic package registry; it publishes no package.
+# Tests for the AGPL snapshot, plus the static Pages site: homepage at /, Call the Point at /label/.
+# The Pages job builds the site and fetches the CC BY clips from the generic package registry; it publishes no package.
 stages:
   - test
   - deploy
@@ -7,7 +7,7 @@ stages:
 default:
   image: python:3.12-slim
   before_script:
-    - apt-get update -qq && apt-get install -y -qq --no-install-recommends ffmpeg libgl1 libglib2.0-0 file >/dev/null
+    - apt-get update -qq && apt-get install -y -qq --no-install-recommends ffmpeg libgl1 libglib2.0-0 file nodejs >/dev/null
     - pip install -q -e ".[dev]"
 
 no-media:
@@ -29,22 +29,22 @@ unit:
       - detector_bench.json
     expire_in: 7 days
 
-# Volunteer labeler (static). Clips are not in git: they are fetched from the
-# session-01-clips generic package and checked against labeler-pages/clips.sha256.
+# Pages site (static). Clips are not in git: build_pages.py fetches them from the
+# session-01-clips generic package and checks each against labeler-pages/clips.sha256.
+# Send is turned on in the built copy only; labeler-pages/submit_config.js keeps it false in git.
+# Deploys only after the media check and the test suite pass.
 pages:
   stage: deploy
-  image: alpine:3.20
+  image: python:3.12-slim
   before_script: []
-  needs: []
+  needs: ["no-media", "unit"]
   variables:
     GIT_DEPTH: "1"
     CLIPS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/session-01-clips/1.0.0"
   script:
-    - mkdir -p public/clips
-    - cp labeler-pages/index.html labeler-pages/app.js labeler-pages/style.css labeler-pages/clips.json public/
-    - cd public/clips
-    - while read -r sum f; do wget -q -O "$f" "$CLIPS/$f"; done < ../../labeler-pages/clips.sha256
-    - sha256sum -c ../../labeler-pages/clips.sha256
+    - PYTHONPATH=. python3 scripts/build_pages.py --fetch-clips --clips-url "$CLIPS" --submit-enabled
+    - grep -q "submitEnabled: true," public/label/submit_config.js
+    - ls public/label/clips | wc -l
   pages: true
   artifacts:
     paths:
@@ -52,5 +52,8 @@ pages:
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       changes:
+        - site/**/*
         - labeler-pages/**/*
+        - scripts/build_pages.py
+        - docs/CC_ATTRIBUTION.md
         - .gitlab-ci.yml

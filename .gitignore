@@ -57,6 +57,7 @@ __pycache__/
 .ruff_cache/
 build/
 dist/
+public/
 
 # OS / editors
 .DS_Store

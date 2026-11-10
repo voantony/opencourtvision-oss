@@ -1,137 +1,400 @@
-// OpenCourtVision volunteer labeler (static). No answer key, no network calls except clips.json and the clips.
 "use strict";
 (function () {
-  var KEY = "ocv-labeler-session-01-v1";
-  var REPO = "https://gitlab.com/antonyvo/opencourtvision";
-  var USER_RE = /^[A-Za-z0-9_.-]{1,255}$/;
-  var data = null, i = 0;
-  var st = load();
+  var CFG = window.OCV_GAME_CONFIG;
+  var I18N = window.OCV_I18N;
+  var R = window.OCVRound;
+  var SUB = window.OCVSubmit;
+  var SHARE = window.OCVShare;
+  var FORM = window.OCV_SUBMIT_CONFIG;
+  var KEY = "ocv-call-the-point-v1";
+  var app = document.getElementById("app");
+  var lang = "en";
+  var practice = [];
+  var clips = [];
+  var videos = [];
+  var boardFile = null;
+  var state = load();
 
   function load() {
-    try { var s = JSON.parse(localStorage.getItem(KEY) || "{}"); return { user: s.user || "", answers: s.answers || {}, at: s.at || 0 }; }
-    catch (e) { return { user: "", answers: {}, at: 0 }; }
+    try {
+      var s = JSON.parse(localStorage.getItem(KEY) || "{}");
+      return {
+        nickname: s.nickname || "",
+        adult: !!s.adult,
+        pointsCalled: s.pointsCalled || 0,
+        days: s.days || [],
+        creditOptIn: !!s.creditOptIn,
+        used: s.used || [],
+        pending: s.pending || null,
+        sent: !!s.sent
+      };
+    } catch (e) {
+      return { nickname: "", adult: false, pointsCalled: 0, days: [], creditOptIn: false, used: [], pending: null, sent: false };
+    }
   }
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) { /* private mode: keep in memory */ } }
-  function $(id) { return document.getElementById(id); }
-
-  function clipAns(id) { return st.answers[id] || (st.answers[id] = { winner: null, server: null }); }
-
-  function show() {
-    var c = data.clips[i];
-    var v = $("clip");
-    if (v.getAttribute("src") !== c.file) { v.src = c.file; }
-    v.playbackRate = parseFloat($("speed").value);
-    var a = st.answers[c.id] || {};
-    $("progress").textContent = "Clip " + (i + 1) + " of " + data.clips.length + "  ·  answered " + doneCount() + " / " + data.clips.length;
-    each(".win", function (b) { b.classList.toggle("on", a.winner === b.dataset.v); });
-    each(".srv", function (b) { b.classList.toggle("on", (a.server || a.winner) ? (a.server || "") === b.dataset.v : false); });
-    var vid = byId(c.video);
-    $("credit").textContent = vid ? "Source: \u201c" + vid.title + "\u201d by " + vid.channel + ", CC BY." : "";
-    $("prev").disabled = i === 0; $("next").disabled = i === data.clips.length - 1;
-    $("done-count").textContent = doneCount() + " of " + data.clips.length + " clips answered.";
-    st.at = i; save();
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* private mode */ }
   }
-  function each(sel, f) { Array.prototype.forEach.call(document.querySelectorAll(sel), f); }
-  function byId(id) { for (var k = 0; k < data.videos.length; k++) if (data.videos[k].id === id) return data.videos[k]; return null; }
-  function doneCount() { var n = 0; data.clips.forEach(function (c) { var a = st.answers[c.id]; if (a && a.winner) n++; }); return n; }
+  function t(key) { return I18N.t(lang, key); }
+  function el(tag, text, attrs) {
+    var node = document.createElement(tag);
+    if (text != null) node.textContent = text;
+    if (attrs) Object.keys(attrs).forEach(function (k) { node.setAttribute(k, attrs[k]); });
+    return node;
+  }
+  function clear() { while (app.firstChild) app.removeChild(app.firstChild); }
+  function today() { return new Date().toISOString().slice(0, 10); }
+  function streakLabel() {
+    var n = R.streak(state.days, today());
+    return n > 0 ? String(n) : "—";
+  }
+  function practiceIds() { return practice.map(function (p) { return p.id; }); }
 
-  function setWinner(v) { clipAns(data.clips[i].id).winner = v; save(); show(); }
-  function setServer(v) { var a = clipAns(data.clips[i].id); a.server = v || null; save(); show(); }
-  function go(d) { var j = i + d; if (j >= 0 && j < data.clips.length) { i = j; show(); playFromStart(); } }
-  function playFromStart() { var v = $("clip"); try { v.currentTime = 0; } catch (e) {} var p = v.play(); if (p && p.catch) p.catch(function () {}); }
-
-  function userOk() {
-    var u = $("user").value.trim().replace(/^@/, "");
-    var ok = USER_RE.test(u) && u.indexOf("@") < 0;
-    $("user-err").hidden = ok || u === "";
-    if (ok) { st.user = u; save(); }
-    return ok ? u : null;
+  function headerCount(phase, index, total) {
+    var key = phase === "warmup" ? "warmupCount" : "pointCount";
+    return el("p", I18N.fill(t(key), { i: index + 1, n: total }), { class: "mono" });
   }
 
-  function payload(u) {
-    var answers = [];
-    data.clips.forEach(function (c) {
-      var a = st.answers[c.id];
-      if (a && a.winner) answers.push({ id: c.id, winner: a.winner, server: a.winner === "S" ? null : (a.server || null) });
+  function flameRow() {
+    var row = el("div", null, { class: "flame-row" });
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("class", "flame");
+    svg.setAttribute("aria-hidden", "true");
+    var a = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    a.setAttribute("d", "M12 2c2 4 2 6 0 8 3-1 6 2 6 6a6 6 0 1 1-12 0c0-3 2-5 4-8 0 2 1 3 2 2z");
+    a.setAttribute("fill", "#FFB627");
+    var b = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    b.setAttribute("d", "M12 14c1 2 3 2 3 4a3 3 0 1 1-6 0c0-2 1-3 3-4z");
+    b.setAttribute("fill", "#C8F43C");
+    svg.appendChild(a); svg.appendChild(b);
+    row.appendChild(svg);
+    row.appendChild(el("span", streakLabel(), { class: "mono", id: "streak" }));
+    return row;
+  }
+
+  function stage(file) {
+    var box = el("div", null, { class: "stage", id: "stage" });
+    var img = el("img", null, { class: "ph", id: "placeholder", src: "../assets/court.svg", alt: "" });
+    var video = el("video", null, { id: "clip", playsinline: "", muted: "", controls: "" });
+    video.hidden = true;
+    if (file) {
+      video.src = file;
+      video.addEventListener("loadeddata", function () {
+        video.hidden = false;
+        img.hidden = true;
+      });
+    }
+    box.appendChild(img);
+    box.appendChild(video);
+    return box;
+  }
+
+  function creditLine(videoId) {
+    var p = el("p", null, { class: "small credit", id: "credit" });
+    var v = null;
+    videos.forEach(function (x) { if (x.id === videoId) v = x; });
+    if (v) {
+      p.appendChild(document.createTextNode((lang === "es" ? "Fuente: \u201c" : "Source: \u201c") + v.title + "\u201d, " + v.channel + ", CC BY. "));
+    }
+    var a = el("a", lang === "es" ? "Cr\u00e9ditos" : "Credits", { href: "../CC_ATTRIBUTION.txt" });
+    p.appendChild(a);
+    return p;
+  }
+
+  function callButtons(onCall, locked, chosen) {
+    var wrap = el("div", null, { class: "stack", id: "calls" });
+    var pair = el("div", null, { class: "pair" });
+    [["A", "callA"], ["B", "callB"]].forEach(function (item) {
+      var b = el("button", t(item[1]), { type: "button", class: "btn call" + (chosen === item[0] ? " on" : ""), "data-call": item[0] });
+      b.disabled = !!locked;
+      b.addEventListener("click", function () { onCall(item[0]); });
+      pair.appendChild(b);
     });
-    return { schema: "ocv.volunteer_labels.v1", session: data.session, gitlab_username: u, answers: answers };
-  }
-  function need() {
-    var u = userOk();
-    if (!u) { alert("Enter your GitLab username first."); $("user").focus(); return null; }
-    if (!doneCount()) { alert("Answer at least one clip first."); return null; }
-    return payload(u);
-  }
-
-  function download() {
-    var p = need(); if (!p) return;
-    var blob = new Blob([JSON.stringify(p, null, 1) + "\n"], { type: "application/json" });
-    var a = document.createElement("a");
-    a.href = URL.createObjectURL(blob); a.download = "labels.json";
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
-  }
-  function issue() {
-    var p = need(); if (!p) return;
-    var body = "/confidential\n\nVolunteer labels for " + p.session + " from @" + p.gitlab_username +
-      " (" + p.answers.length + " of " + data.clips.length + " clips), made with the OpenCourtVision Pages labeler.\n\n```json\n" +
-      JSON.stringify(p) + "\n```\n";
-    var url = REPO + "/-/issues/new?issue[title]=" + encodeURIComponent("Labels: " + p.session + " from @" + p.gitlab_username) +
-      "&issue[description]=" + encodeURIComponent(body);
-    window.open(url, "_blank", "noopener,noreferrer");
+    var fault = el("button", t("callF"), { type: "button", class: "btn quiet call" + (chosen === "F" ? " on" : ""), "data-call": "F" });
+    fault.disabled = !!locked;
+    fault.addEventListener("click", function () { onCall("F"); });
+    wrap.appendChild(pair);
+    wrap.appendChild(fault);
+    return wrap;
   }
 
-  function keys(e) {
-    if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "SELECT")) return;
-    if (e.metaKey || e.ctrlKey || e.altKey) return;
-    var k = e.key;
-    if (k === "a" || k === "A") setWinner("A");
-    else if (k === "b" || k === "B") setWinner("B");
-    else if (k === "s" || k === "S") setWinner("S");
-    else if (k === "1") setServer("A");
-    else if (k === "2") setServer("B");
-    else if (k === "0") setServer("");
-    else if (k === "r" || k === "R") playFromStart();
-    else if (k === "ArrowRight") go(1);
-    else if (k === "ArrowLeft") go(-1);
-    else return;
-    e.preventDefault();
-  }
-
-  function init(d) {
-    data = d;
-    i = Math.min(Math.max(st.at | 0, 0), data.clips.length - 1);
-    $("user").value = st.user;
-    $("user").addEventListener("input", userOk);
-    each(".win", function (b) { b.addEventListener("click", function () { setWinner(b.dataset.v); }); });
-    each(".srv", function (b) { b.addEventListener("click", function () { setServer(b.dataset.v); }); });
-    $("prev").addEventListener("click", function () { go(-1); });
-    $("next").addEventListener("click", function () { go(1); });
-    $("replay").addEventListener("click", playFromStart);
-    $("speed").addEventListener("change", function () { $("clip").playbackRate = parseFloat(this.value); });
-    $("clip").addEventListener("loadedmetadata", function () { this.playbackRate = parseFloat($("speed").value); });
-    $("download").addEventListener("click", download);
-    $("issue").addEventListener("click", issue);
-    $("clear").addEventListener("click", function () {
-      if (!confirm("Delete your username and answers from this browser?")) return;
-      try { localStorage.removeItem(KEY); } catch (e) {}
-      st = { user: "", answers: {}, at: 0 }; $("user").value = ""; i = 0; show();
+  function showStart() {
+    clear();
+    document.title = t("title");
+    app.appendChild(el("h1", t("title")));
+    var nick = el("input", null, { id: "nick", type: "text", maxlength: "32", autocomplete: "off" });
+    nick.placeholder = t("nickname");
+    nick.value = state.nickname;
+    nick.placeholder = t("nickname");
+    nick.setAttribute("aria-label", t("nickname"));
+    nick.addEventListener("input", function () { state.nickname = nick.value.trim(); save(); });
+    var lab = el("label", null, { class: "check" });
+    var box = el("input", null, { id: "adult", type: "checkbox" });
+    box.checked = false;
+    lab.appendChild(box);
+    lab.appendChild(document.createTextNode(t("adult")));
+    var play = el("button", t("play"), { type: "button", class: "btn volt", id: "play" });
+    play.disabled = true;
+    box.addEventListener("change", function () {
+      play.disabled = !box.checked;
+      state.adult = box.checked;
+      save();
     });
-    document.addEventListener("keydown", keys);
-    var ul = $("credit-list");
-    data.videos.forEach(function (v) {
-      var li = document.createElement("li"), a = document.createElement("a");
-      a.href = v.url; a.rel = "noopener noreferrer"; a.textContent = "\u201c" + v.title + "\u201d";
-      var ch = document.createElement("a"); ch.href = v.channel_url; ch.rel = "noopener noreferrer"; ch.textContent = v.channel;
-      li.appendChild(a); li.appendChild(document.createTextNode(" by ")); li.appendChild(ch);
-      li.appendChild(document.createTextNode(", CC BY"));
-      ul.appendChild(li);
+    play.addEventListener("click", function () {
+      if (!box.checked || !practice.length) return;
+      showWarmup(0, null);
     });
-    show();
+    app.appendChild(nick);
+    app.appendChild(lab);
+    app.appendChild(play);
+    app.appendChild(el("p", t("honest"), { class: "small", id: "honest" }));
+    var boardLink = el("button", t("boardTitle"), { type: "button", class: "textlink", id: "open-board" });
+    boardLink.addEventListener("click", showBoard);
+    app.appendChild(boardLink);
   }
 
-  fetch("clips.json", { cache: "no-cache", credentials: "omit" })
-    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(init)
-    .catch(function (e) { $("progress").textContent = "Could not load the clip list (" + e.message + "). Reload the page."; });
+  function showWarmup(index, chosen) {
+    var point = practice[index];
+    clear();
+    var head = el("div", null, { class: "point-head" });
+    head.appendChild(headerCount("warmup", index, practice.length));
+    head.appendChild(flameRow());
+    app.appendChild(head);
+    app.appendChild(stage(point.file));
+    if (index === 0 && !chosen) app.appendChild(el("p", t("reminder"), { class: "reminder", id: "reminder" }));
+    var feedback = el("p", "", { class: "feedback", id: "feedback" });
+    var reason = el("p", "", { class: "small", id: "reason" });
+    app.appendChild(feedback);
+    app.appendChild(reason);
+    function paintWarm(call) {
+      var fb = R.playerFeedback("warmup", point, call, lang);
+      feedback.textContent = fb.text;
+      reason.textContent = fb.reason;
+    }
+    if (chosen) paintWarm(chosen);
+    app.appendChild(callButtons(function (call) {
+      if (chosen) return;
+      showWarmup(index, call);
+    }, !!chosen, chosen));
+    if (chosen) {
+      var next = el("button", index + 1 < practice.length ? t("next") : t("play"), { type: "button", class: "btn volt", id: "next" });
+      next.addEventListener("click", function () {
+        if (index + 1 < practice.length) showWarmup(index + 1, null);
+        else beginRound();
+      });
+      app.appendChild(next);
+    } else {
+      var skip = el("button", t("skip"), { type: "button", class: "textlink", id: "skip-warmup" });
+      skip.addEventListener("click", beginRound);
+      app.appendChild(skip);
+    }
+  }
+
+  function beginRound() {
+    var picked = R.pickRound(clips, state.used, CFG.roundSize);
+    if (picked.length < CFG.roundSize) {
+      clear();
+      app.appendChild(el("p", t("honest")));
+      return;
+    }
+    state.pending = {
+      round_id: (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()),
+      ids: picked.map(function (c) { return c.id; }),
+      calls: {},
+      index: 0,
+      pointsAtStart: state.pointsCalled,
+      gradesAtStart: R.unlockedNames(state.pointsCalled, CFG.grades)
+    };
+    state.sent = false;
+    save();
+    showLive(null);
+  }
+
+  function currentClip() {
+    var id = state.pending.ids[state.pending.index];
+    for (var i = 0; i < clips.length; i++) if (clips[i].id === id) return R.sanitizeClip(clips[i]);
+    return { id: id, file: "", engine: null };
+  }
+
+  function showLive(chosen) {
+    var pending = state.pending;
+    var clip = currentClip();
+    clear();
+    var head = el("div", null, { class: "point-head" });
+    head.appendChild(headerCount("live", pending.index, pending.ids.length));
+    head.appendChild(flameRow());
+    app.appendChild(head);
+    app.appendChild(stage(clip.file));
+    app.appendChild(creditLine(clip.video_id));
+    var feedback = el("p", "", { class: "feedback", id: "feedback" });
+    var engine = el("p", "", { class: "engine", id: "engine", hidden: "" });
+    app.appendChild(feedback);
+    app.appendChild(engine);
+    if (chosen) {
+      var live = R.liveFeedback(CFG.xpPerCall);
+      var face = R.playerFeedback("live", clip, chosen, lang);
+      feedback.textContent = t("called") + " " + I18N.fill(t("xp"), { n: live.xp });
+      engine.hidden = !face.showEngine;
+      engine.textContent = face.engineText;
+    }
+    app.appendChild(callButtons(function (call) {
+      if (pending.calls[clip.id]) return;
+      pending.calls[clip.id] = call;
+      state.pointsCalled += 1;
+      if (state.used.indexOf(clip.id) < 0) state.used.push(clip.id);
+      save();
+      showLive(call);
+    }, !!chosen, chosen));
+    if (chosen) {
+      var last = pending.index + 1 >= pending.ids.length;
+      var next = el("button", last ? t("summaryGo") : t("next"), { type: "button", class: "btn volt", id: "next" });
+      next.addEventListener("click", function () {
+        if (last) finishRound();
+        else { pending.index += 1; save(); showLive(null); }
+      });
+      app.appendChild(next);
+    }
+  }
+
+  function finishRound() {
+    var day = today();
+    if (state.days.indexOf(day) < 0) state.days.push(day);
+    save();
+    showSummary();
+  }
+
+  function roundCalls() {
+    return R.submissionCalls(state.pending.ids, state.pending.calls, practiceIds());
+  }
+
+  function showSummary() {
+    clear();
+    var n = state.pending.ids.length;
+    app.appendChild(el("h1", t("title")));
+    app.appendChild(el("p", I18N.fill(t("summaryCount"), { n: n }), { class: "mono", id: "sum-count" }));
+    app.appendChild(el("p", t("beat"), { id: "sum-beat" }));
+    var grades = el("ul", null, { class: "grades", id: "grades" });
+    R.gradeState(state.pointsCalled, CFG.grades, state.pending.gradesAtStart).forEach(function (g) {
+      grades.appendChild(el("li", g.name + " " + g.need, { class: g.cls }));
+    });
+    app.appendChild(grades);
+    var opt = el("label", null, { class: "check" });
+    var optBox = el("input", null, { id: "credits-opt", type: "checkbox" });
+    optBox.checked = false;
+    opt.appendChild(optBox);
+    opt.appendChild(document.createTextNode(t("credits")));
+    optBox.addEventListener("change", function () { state.creditOptIn = optBox.checked; save(); });
+    app.appendChild(opt);
+    var more = el("button", t("more"), { type: "button", class: "btn volt", id: "more" });
+    more.addEventListener("click", beginRound);
+    app.appendChild(more);
+    var ready = SUB.submitReady(FORM);
+    var sendLabel = ready ? (state.sent ? t("resend") : t("send")) : t("sendSoon");
+    var send = el("button", sendLabel, { type: "button", class: "btn outline", id: "send" });
+    send.disabled = !ready;
+    send.addEventListener("click", postCalls);
+    app.appendChild(send);
+    app.appendChild(el("p", t("sendNote"), { class: "small", id: "send-note" }));
+    if (state.sent) app.appendChild(el("p", t("sent"), { id: "send-status", class: "small" }));
+    var mail = el("a", t("email"), { id: "email-fallback", class: "textlink", href: mailHref() });
+    app.appendChild(mail);
+    var share = el("button", t("share"), { type: "button", class: "btn outline", id: "share" });
+    share.addEventListener("click", showShare);
+    app.appendChild(share);
+    var boardBtn = el("button", t("boardTitle"), { type: "button", class: "textlink", id: "open-board" });
+    boardBtn.addEventListener("click", showBoard);
+    app.appendChild(boardBtn);
+  }
+
+  function mailHref() {
+    var calls = roundCalls();
+    var json = SUB.callsJson({ round_id: state.pending.round_id, calls: calls });
+    return SUB.mailtoUrl(state.nickname, json);
+  }
+
+  function postCalls() {
+    if (!SUB.submitReady(FORM) || !state.pending) return;
+    var calls = roundCalls();
+    var spec = SUB.encodeBody(FORM, { nickname: state.nickname, round_id: state.pending.round_id, calls: calls });
+    fetch(spec.url, {
+      method: "POST",
+      mode: spec.mode,
+      credentials: spec.credentials,
+      headers: { "Content-Type": spec.contentType },
+      body: spec.body
+    }).then(function () {
+      state.sent = true;
+      save();
+      showSummary();
+    }).catch(function () { /* the email link stays on the summary */ });
+  }
+
+  function currentGrade() {
+    var names = R.unlockedNames(state.pointsCalled, CFG.grades);
+    return names.length ? names[names.length - 1] : "";
+  }
+
+  function showShare() {
+    var panel = el("div", null, { class: "share-panel", id: "share-panel" });
+    var model = SHARE.cardCopy(I18N, lang, state.pointsCalled, currentGrade());
+    ["fourfive", "story"].forEach(function (name) {
+      var canvas = el("canvas");
+      SHARE.draw(canvas, model, name);
+      panel.appendChild(canvas);
+      var a = el("a", name, { class: "textlink", download: "vamos-" + name + ".png" });
+      a.href = canvas.toDataURL("image/png");
+      panel.appendChild(a);
+    });
+    app.appendChild(panel);
+  }
+
+  function showBoard() {
+    clear();
+    app.appendChild(el("h1", t("boardTitle")));
+    app.appendChild(el("p", t("boardHint"), { class: "small" }));
+    var head = el("div", null, { class: "board-head" });
+    head.appendChild(el("span", t("boardName")));
+    head.appendChild(el("span", t("boardAccuracy")));
+    app.appendChild(head);
+    var list = el("ol", null, { class: "board", id: "board" });
+    var rows = R.leaderboardRows(boardFile, CFG.minChecks);
+    if (!rows.length) {
+      var li = el("li");
+      li.appendChild(el("span", t("boardName")));
+      li.appendChild(el("span", "—", { class: "mono" }));
+      list.appendChild(li);
+    } else {
+      rows.forEach(function (row) {
+        var li = el("li");
+        li.appendChild(el("span", row.nickname));
+        li.appendChild(el("span", row.accuracy_band || "—", { class: "mono" }));
+        list.appendChild(li);
+      });
+    }
+    app.appendChild(list);
+    var back = el("button", t("back"), { type: "button", class: "textlink", id: "back-start" });
+    back.addEventListener("click", showStart);
+    app.appendChild(back);
+  }
+
+  function boot() {
+    document.getElementById("lang-en").addEventListener("click", function () { lang = "en"; document.documentElement.lang = "en"; showStart(); });
+    document.getElementById("lang-es").addEventListener("click", function () { lang = "es"; document.documentElement.lang = "es"; showStart(); });
+    if (new URLSearchParams(location.search).get("lang") === "es") lang = "es";
+    var practiceP = fetch("practice.json", { cache: "no-cache", credentials: "omit" }).then(function (r) { return r.json(); });
+    var clipsP = fetch("clips.json", { cache: "no-cache", credentials: "omit" }).then(function (r) { return r.json(); });
+    var boardP = fetch("leaderboard.json", { cache: "no-cache", credentials: "omit" }).then(function (r) {
+      if (!r.ok) return null;
+      return r.json();
+    }).catch(function () { return null; });
+    Promise.all([practiceP, clipsP, boardP]).then(function (all) {
+      practice = (all[0] && all[0].points) || [];
+      clips = (all[1] && all[1].clips) || [];
+      videos = (all[1] && all[1].videos) || [];
+      boardFile = all[2];
+      showStart();
+    }).catch(function () { showStart(); });
+  }
+  boot();
 })();
