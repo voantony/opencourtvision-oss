@@ -1,0 +1,261 @@
+{
+ "session": "session-01",
+ "videos": [
+  {
+   "id": "GKWNVYeEAlE",
+   "title": "Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena",
+   "channel": "Padel Match Point",
+   "channel_url": "https://www.youtube.com/channel/UC-HVV4JL9YIsW4BgL9w9svw",
+   "url": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+   "licence": "CC BY"
+  },
+  {
+   "id": "632k3fKraeA",
+   "title": "Padel match level 3 - Partido de Padél - Partita padel competitiva - Full match",
+   "channel": "Padel Match Point",
+   "channel_url": "https://www.youtube.com/channel/UC-HVV4JL9YIsW4BgL9w9svw",
+   "url": "https://www.youtube.com/watch?v=632k3fKraeA",
+   "licence": "CC BY"
+  },
+  {
+   "id": "2p6PcKP0720",
+   "title": "Bogdan/Costi VS Tudor/Ludovico - Padel FZN Arena - Level 2.5",
+   "channel": "Amateur Padel",
+   "channel_url": "https://www.youtube.com/channel/UCnY3YfSon2KM4y9awSs-Yrg",
+   "url": "https://www.youtube.com/watch?v=2p6PcKP0720",
+   "licence": "CC BY"
+  }
+ ],
+ "clips": [
+  {
+   "id": "2p6PcKP0720_p1",
+   "file": "clips/2p6PcKP0720_1.mp4",
+   "video": "2p6PcKP0720"
+  },
+  {
+   "id": "2p6PcKP0720_p2",
+   "file": "clips/2p6PcKP0720_2.mp4",
+   "video": "2p6PcKP0720"
+  },
+  {
+   "id": "2p6PcKP0720_p3",
+   "file": "clips/2p6PcKP0720_3.mp4",
+   "video": "2p6PcKP0720"
+  },
+  {
+   "id": "2p6PcKP0720_p4",
+   "file": "clips/2p6PcKP0720_4.mp4",
+   "video": "2p6PcKP0720"
+  },
+  {
+   "id": "2p6PcKP0720_p5",
+   "file": "clips/2p6PcKP0720_5.mp4",
+   "video": "2p6PcKP0720"
+  },
+  {
+   "id": "632k3fKraeA_p1",
+   "file": "clips/632k3fKraeA_1.mp4",
+   "video": "632k3fKraeA"
+  },
+  {
+   "id": "632k3fKraeA_p2",
+   "file": "clips/632k3fKraeA_2.mp4",
+   "video": "632k3fKraeA"
+  },
+  {
+   "id": "632k3fKraeA_p3",
+   "file": "clips/632k3fKraeA_3.mp4",
+   "video": "632k3fKraeA"
+  },
+  {
+   "id": "632k3fKraeA_p4",
+   "file": "clips/632k3fKraeA_4.mp4",
+   "video": "632k3fKraeA"
+  },
+  {
+   "id": "632k3fKraeA_p5",
+   "file": "clips/632k3fKraeA_5.mp4",
+   "video": "632k3fKraeA"
+  },
+  {
+   "id": "632k3fKraeA_p6",
+   "file": "clips/632k3fKraeA_6.mp4",
+   "video": "632k3fKraeA"
+  },
+  {
+   "id": "632k3fKraeA_p7",
+   "file": "clips/632k3fKraeA_7.mp4",
+   "video": "632k3fKraeA"
+  },
+  {
+   "id": "632k3fKraeA_p8",
+   "file": "clips/632k3fKraeA_8.mp4",
+   "video": "632k3fKraeA"
+  },
+  {
+   "id": "632k3fKraeA_p9",
+   "file": "clips/632k3fKraeA_9.mp4",
+   "video": "632k3fKraeA"
+  },
+  {
+   "id": "632k3fKraeA_p10",
+   "file": "clips/632k3fKraeA_10.mp4",
+   "video": "632k3fKraeA"
+  },
+  {
+   "id": "632k3fKraeA_p11",
+   "file": "clips/632k3fKraeA_11.mp4",
+   "video": "632k3fKraeA"
+  },
+  {
+   "id": "632k3fKraeA_p12",
+   "file": "clips/632k3fKraeA_12.mp4",
+   "video": "632k3fKraeA"
+  },
+  {
+   "id": "632k3fKraeA_p13",
+   "file": "clips/632k3fKraeA_13.mp4",
+   "video": "632k3fKraeA"
+  },
+  {
+   "id": "632k3fKraeA_p14",
+   "file": "clips/632k3fKraeA_14.mp4",
+   "video": "632k3fKraeA"
+  },
+  {
+   "id": "GKWNVYeEAlE_p1",
+   "file": "clips/GKWNVYeEAlE_1.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p2",
+   "file": "clips/GKWNVYeEAlE_2.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p3",
+   "file": "clips/GKWNVYeEAlE_3.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p4",
+   "file": "clips/GKWNVYeEAlE_4.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p5",
+   "file": "clips/GKWNVYeEAlE_5.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p6",
+   "file": "clips/GKWNVYeEAlE_6.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p7",
+   "file": "clips/GKWNVYeEAlE_7.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p8",
+   "file": "clips/GKWNVYeEAlE_8.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p9",
+   "file": "clips/GKWNVYeEAlE_9.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p10",
+   "file": "clips/GKWNVYeEAlE_10.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p11",
+   "file": "clips/GKWNVYeEAlE_11.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p12",
+   "file": "clips/GKWNVYeEAlE_12.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p13",
+   "file": "clips/GKWNVYeEAlE_13.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p14",
+   "file": "clips/GKWNVYeEAlE_14.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p15",
+   "file": "clips/GKWNVYeEAlE_15.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p16",
+   "file": "clips/GKWNVYeEAlE_16.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p17",
+   "file": "clips/GKWNVYeEAlE_17.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p18",
+   "file": "clips/GKWNVYeEAlE_18.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p19",
+   "file": "clips/GKWNVYeEAlE_19.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p20",
+   "file": "clips/GKWNVYeEAlE_20.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p21",
+   "file": "clips/GKWNVYeEAlE_21.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p22",
+   "file": "clips/GKWNVYeEAlE_22.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p23",
+   "file": "clips/GKWNVYeEAlE_23.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p24",
+   "file": "clips/GKWNVYeEAlE_24.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p25",
+   "file": "clips/GKWNVYeEAlE_25.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p26",
+   "file": "clips/GKWNVYeEAlE_26.mp4",
+   "video": "GKWNVYeEAlE"
+  },
+  {
+   "id": "GKWNVYeEAlE_p27",
+   "file": "clips/GKWNVYeEAlE_27.mp4",
+   "video": "GKWNVYeEAlE"
+  }
+ ]
+}

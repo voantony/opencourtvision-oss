@@ -1,6 +1,8 @@
-# Tests for the AGPL snapshot. No deploy, no registry publish.
+# Tests for the AGPL snapshot, plus the static volunteer labeler on GitLab Pages.
+# The Pages job copies the HTML/JS and fetches the CC BY clips from the generic package registry; it publishes no package.
 stages:
   - test
+  - deploy
 
 default:
   image: python:3.12-slim
@@ -26,3 +28,29 @@ unit:
     paths:
       - detector_bench.json
     expire_in: 7 days
+
+# Volunteer labeler (static). Clips are not in git: they are fetched from the
+# session-01-clips generic package and checked against labeler-pages/clips.sha256.
+pages:
+  stage: deploy
+  image: alpine:3.20
+  before_script: []
+  needs: []
+  variables:
+    GIT_DEPTH: "1"
+    CLIPS: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/session-01-clips/1.0.0"
+  script:
+    - mkdir -p public/clips
+    - cp labeler-pages/index.html labeler-pages/app.js labeler-pages/style.css labeler-pages/clips.json public/
+    - cd public/clips
+    - while read -r sum f; do wget -q -O "$f" "$CLIPS/$f"; done < ../../labeler-pages/clips.sha256
+    - sha256sum -c ../../labeler-pages/clips.sha256
+  pages: true
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      changes:
+        - labeler-pages/**/*
+        - .gitlab-ci.yml

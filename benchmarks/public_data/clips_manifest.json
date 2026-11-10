@@ -1,4 +1,466 @@
 {
   "policy": "CC0 or CC BY only. A clip is downloadable only when sha256 is a 64-hex digest. Do not commit the bytes.",
-  "clips": []
+  "clips": [
+    {
+      "id": "2p6PcKP0720_p1",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=2p6PcKP0720",
+      "source_start_s": 804.08,
+      "source_end_s": 817.58,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/2p6PcKP0720_1.mp4",
+      "sha256": "697f37c467ef2d3bb3ae39e3f312fa47a499bf275731bda6e350ad6a0ac34cff",
+      "attribution": "\"Bogdan/Costi VS Tudor/Ludovico - Padel FZN Arena - Level 2.5\" by Amateur Padel (https://www.youtube.com/watch?v=2p6PcKP0720), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "2p6PcKP0720_p2",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=2p6PcKP0720",
+      "source_start_s": 829.64,
+      "source_end_s": 843.77,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/2p6PcKP0720_2.mp4",
+      "sha256": "eb041a2983f7a8e359a65ccdedef715d8ca30c811887be1e128d2a6587fb3253",
+      "attribution": "\"Bogdan/Costi VS Tudor/Ludovico - Padel FZN Arena - Level 2.5\" by Amateur Padel (https://www.youtube.com/watch?v=2p6PcKP0720), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "2p6PcKP0720_p3",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=2p6PcKP0720",
+      "source_start_s": 843.97,
+      "source_end_s": 853.02,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/2p6PcKP0720_3.mp4",
+      "sha256": "f31a1e16a63f0bd703df39cd91da491559103eeabc76740cb7e806b858c413b1",
+      "attribution": "\"Bogdan/Costi VS Tudor/Ludovico - Padel FZN Arena - Level 2.5\" by Amateur Padel (https://www.youtube.com/watch?v=2p6PcKP0720), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "2p6PcKP0720_p4",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=2p6PcKP0720",
+      "source_start_s": 864.9,
+      "source_end_s": 869.3,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/2p6PcKP0720_4.mp4",
+      "sha256": "dd1889e0c3ccb89faff533b89443bf7176c4fd92bca267e5bf168fe609dac0c7",
+      "attribution": "\"Bogdan/Costi VS Tudor/Ludovico - Padel FZN Arena - Level 2.5\" by Amateur Padel (https://www.youtube.com/watch?v=2p6PcKP0720), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "2p6PcKP0720_p5",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=2p6PcKP0720",
+      "source_start_s": 884.53,
+      "source_end_s": 895.1,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/2p6PcKP0720_5.mp4",
+      "sha256": "1546e6cd2849768c3e6ce43d688a1687e654363bf0ce25d2a6f1b79706e22422",
+      "attribution": "\"Bogdan/Costi VS Tudor/Ludovico - Padel FZN Arena - Level 2.5\" by Amateur Padel (https://www.youtube.com/watch?v=2p6PcKP0720), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "632k3fKraeA_p1",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=632k3fKraeA",
+      "source_start_s": 220.65,
+      "source_end_s": 225.05,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/632k3fKraeA_1.mp4",
+      "sha256": "580def59c6a54e14632289bc023243004933510ab09292491e196deb7392cf10",
+      "attribution": "\"Padel match level 3 - Partido de Padél - Partita padel competitiva - Full match\" by Padel Match Point (https://www.youtube.com/watch?v=632k3fKraeA), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "632k3fKraeA_p2",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=632k3fKraeA",
+      "source_start_s": 251.24,
+      "source_end_s": 255.64,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/632k3fKraeA_2.mp4",
+      "sha256": "ee278bfc5650aabfc0cf5e6d0b676a7fc02c50652bd5743bdf119cd15e75ee22",
+      "attribution": "\"Padel match level 3 - Partido de Padél - Partita padel competitiva - Full match\" by Padel Match Point (https://www.youtube.com/watch?v=632k3fKraeA), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "632k3fKraeA_p3",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=632k3fKraeA",
+      "source_start_s": 345.19,
+      "source_end_s": 349.72,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/632k3fKraeA_3.mp4",
+      "sha256": "1e47d833842908fb42c33c4489d76dad843e7068f69037662af01de4dc062683",
+      "attribution": "\"Padel match level 3 - Partido de Padél - Partita padel competitiva - Full match\" by Padel Match Point (https://www.youtube.com/watch?v=632k3fKraeA), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "632k3fKraeA_p4",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=632k3fKraeA",
+      "source_start_s": 382.06,
+      "source_end_s": 386.46,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/632k3fKraeA_4.mp4",
+      "sha256": "14c371bfaa880ad3dcce57f6908496e5af1331143f8dab8fab315ca219327914",
+      "attribution": "\"Padel match level 3 - Partido de Padél - Partita padel competitiva - Full match\" by Padel Match Point (https://www.youtube.com/watch?v=632k3fKraeA), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "632k3fKraeA_p5",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=632k3fKraeA",
+      "source_start_s": 505.68,
+      "source_end_s": 515.66,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/632k3fKraeA_5.mp4",
+      "sha256": "97baf76d593a9ac25aa32f6eda04e95bffbe975bca2c1ef041cee188a0448086",
+      "attribution": "\"Padel match level 3 - Partido de Padél - Partita padel competitiva - Full match\" by Padel Match Point (https://www.youtube.com/watch?v=632k3fKraeA), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "632k3fKraeA_p6",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=632k3fKraeA",
+      "source_start_s": 522.73,
+      "source_end_s": 529.09,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/632k3fKraeA_6.mp4",
+      "sha256": "9c1de8c1272983dbbbc64b492c70ff53c22542e1972d74155be5a26d4989b259",
+      "attribution": "\"Padel match level 3 - Partido de Padél - Partita padel competitiva - Full match\" by Padel Match Point (https://www.youtube.com/watch?v=632k3fKraeA), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "632k3fKraeA_p7",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=632k3fKraeA",
+      "source_start_s": 545.81,
+      "source_end_s": 554.01,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/632k3fKraeA_7.mp4",
+      "sha256": "115387e9d4adb66e1489c4b48b56b9999e0d9288305c096c74d508782d6e7265",
+      "attribution": "\"Padel match level 3 - Partido de Padél - Partita padel competitiva - Full match\" by Padel Match Point (https://www.youtube.com/watch?v=632k3fKraeA), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "632k3fKraeA_p8",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=632k3fKraeA",
+      "source_start_s": 567.6,
+      "source_end_s": 581.65,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/632k3fKraeA_8.mp4",
+      "sha256": "f01bad09863d0c48a78bbec134d6d8e9b09729a5ecb48358e79ce2253a1af0fd",
+      "attribution": "\"Padel match level 3 - Partido de Padél - Partita padel competitiva - Full match\" by Padel Match Point (https://www.youtube.com/watch?v=632k3fKraeA), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "632k3fKraeA_p9",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=632k3fKraeA",
+      "source_start_s": 596.76,
+      "source_end_s": 603.38,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/632k3fKraeA_9.mp4",
+      "sha256": "909433acc2b7b927747fa1edbbbe569026c03c73385d6c3c9d839372896cbc86",
+      "attribution": "\"Padel match level 3 - Partido de Padél - Partita padel competitiva - Full match\" by Padel Match Point (https://www.youtube.com/watch?v=632k3fKraeA), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "632k3fKraeA_p10",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=632k3fKraeA",
+      "source_start_s": 688.83,
+      "source_end_s": 696.78,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/632k3fKraeA_10.mp4",
+      "sha256": "2ba5eebfcf87ac80135142383071d5f121f9810125d0152881448f975013040a",
+      "attribution": "\"Padel match level 3 - Partido de Padél - Partita padel competitiva - Full match\" by Padel Match Point (https://www.youtube.com/watch?v=632k3fKraeA), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "632k3fKraeA_p11",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=632k3fKraeA",
+      "source_start_s": 722.15,
+      "source_end_s": 727.62,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/632k3fKraeA_11.mp4",
+      "sha256": "49866b541d27feaa0b1603c6f041eeaf94b875708d8fb79e170c05a54b3fb236",
+      "attribution": "\"Padel match level 3 - Partido de Padél - Partita padel competitiva - Full match\" by Padel Match Point (https://www.youtube.com/watch?v=632k3fKraeA), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "632k3fKraeA_p12",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=632k3fKraeA",
+      "source_start_s": 768.67,
+      "source_end_s": 777.7,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/632k3fKraeA_12.mp4",
+      "sha256": "22a581809eb05dad450a82ee9c77f5183485c7bfe59525d59d57eeffc0e1f0f1",
+      "attribution": "\"Padel match level 3 - Partido de Padél - Partita padel competitiva - Full match\" by Padel Match Point (https://www.youtube.com/watch?v=632k3fKraeA), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "632k3fKraeA_p13",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=632k3fKraeA",
+      "source_start_s": 784.21,
+      "source_end_s": 788.61,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/632k3fKraeA_13.mp4",
+      "sha256": "f239d2bf9758875c936def4791ce8bd5d9467b199d09326a34c78749b21dacc7",
+      "attribution": "\"Padel match level 3 - Partido de Padél - Partita padel competitiva - Full match\" by Padel Match Point (https://www.youtube.com/watch?v=632k3fKraeA), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "632k3fKraeA_p14",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=632k3fKraeA",
+      "source_start_s": 807.97,
+      "source_end_s": 815.95,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/632k3fKraeA_14.mp4",
+      "sha256": "ebb623e5a7e0d989f2b64991e4c49e9d5126ddb3a808b62a477ca4c38d9d3678",
+      "attribution": "\"Padel match level 3 - Partido de Padél - Partita padel competitiva - Full match\" by Padel Match Point (https://www.youtube.com/watch?v=632k3fKraeA), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p1",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 177.54,
+      "source_end_s": 191.29,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_1.mp4",
+      "sha256": "90dd19d203072b2e6eff6e6fc776316b4153ceed93b37c931d58b46770dbf4b3",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p2",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 200.18,
+      "source_end_s": 216.9,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_2.mp4",
+      "sha256": "17b4b93a7762a7f9209a6140e12e42d84b4536ffaab048304fc820eb1ee2f7d1",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p3",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 234.25,
+      "source_end_s": 241.38,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_3.mp4",
+      "sha256": "5c8e1f01ee508e55d58402f8b607a9232cab3ca5126f3fd70b3e0a8fec6185b6",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p4",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 254.15,
+      "source_end_s": 261.95,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_4.mp4",
+      "sha256": "cee8192fb216bff26b8e2db0f70853410a9aa9af537768f2edeabc5a390dade3",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p5",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 269.43,
+      "source_end_s": 278.75,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_5.mp4",
+      "sha256": "c517f2f616e0205c91b92a5605ab64bfeea665dba3832a45c81ae721049946c4",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p6",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 284.37,
+      "source_end_s": 302.84,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_6.mp4",
+      "sha256": "2a630bd570363f1d4137df26923f8ac1daf8ff5e9b8b755761edc50dd05bab67",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p7",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 324.79,
+      "source_end_s": 333.03,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_7.mp4",
+      "sha256": "2ff8f87438380940b17484e04c85b4c3c0864125bf4b94ed7aac03430162eb49",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p8",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 357.89,
+      "source_end_s": 368.22,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_8.mp4",
+      "sha256": "fa127ee50a99bb65ce72f8679517dcca6829e660b03f69f3f3654ba4b4a75a8a",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p9",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 375.05,
+      "source_end_s": 379.45,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_9.mp4",
+      "sha256": "255449ba7492014a2cba1c493583db4d591653220f10e38c8f5a43c3fde7e667",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p10",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 403.2,
+      "source_end_s": 414.99,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_10.mp4",
+      "sha256": "f74c6959748a967ae990ff67bc13e5bb315aefe8a0b75014b50a4aa706efe5c1",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p11",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 420.4,
+      "source_end_s": 433.07,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_11.mp4",
+      "sha256": "1bc60f787325e17c37eecde7bd93373d3673664262b85c2936d13f988d62e30a",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p12",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 449.19,
+      "source_end_s": 453.89,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_12.mp4",
+      "sha256": "cf4e9f0a31834d5189d810973b1d22804d30afd48ec85d4496667be82836ce26",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p13",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 482.99,
+      "source_end_s": 490.77,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_13.mp4",
+      "sha256": "ef2f9a7ba2497425c2aec4eec48ca29860ae76642fad1fcbba0b98f2892400cc",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p14",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 510.42,
+      "source_end_s": 516.02,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_14.mp4",
+      "sha256": "b9fb0d78289c13bc906e0c26a54da5af0b96ec91102a29c0d57ee6a01c68f808",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p15",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 557.94,
+      "source_end_s": 566.65,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_15.mp4",
+      "sha256": "5d8ad085920609d1edf32d1a9a06957973547e5e07597ff2277a644f0a06de5d",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p16",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 571.82,
+      "source_end_s": 588.49,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_16.mp4",
+      "sha256": "c8a5e21ecd74eab89149e818f7420312e35f2a20fae5fa751d08501c38f25ed3",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p17",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 595.94,
+      "source_end_s": 600.34,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_17.mp4",
+      "sha256": "2051efb49b9962064cec7db383b6675c5ee5e12019a935fc8377f4b903f6949f",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p18",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 613.24,
+      "source_end_s": 618.84,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_18.mp4",
+      "sha256": "bb86fde4a38b283145d0a4e9014389739f76c0bddd29689d71d5ab5b55865179",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p19",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 644.6,
+      "source_end_s": 665.02,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_19.mp4",
+      "sha256": "28cf768f7e252d3e6abe15b793f9a9722ed6fad9702f78ce32f0bff07da5af2c",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p20",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 673.59,
+      "source_end_s": 683.24,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_20.mp4",
+      "sha256": "77cf07a605a519d9fd32f88fd76a40b83b995ee14b7155343e03c597aa021444",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p21",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 695.3,
+      "source_end_s": 709.22,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_21.mp4",
+      "sha256": "5e8f457ae7d857ee171c6f85ef96f204389fa32bba86135b90b553565a68c4a0",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p22",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 727.71,
+      "source_end_s": 735.59,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_22.mp4",
+      "sha256": "36184c2b72ed408d99cf7e2bca7d4661e57935dd19eb5260223c8fb99624156d",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p23",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 764.81,
+      "source_end_s": 781.81,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_23.mp4",
+      "sha256": "a28e6a860d448e2f67452fa58a3ac035f6063da08a8ba0d89ce491f5df1b742a",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p24",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 822.3,
+      "source_end_s": 829.04,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_24.mp4",
+      "sha256": "a1671378fee1c780a34689381160407d5f6aa919c7921b5002cedce8f8487a59",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p25",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 844.14,
+      "source_end_s": 858.42,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_25.mp4",
+      "sha256": "dcf8ab9620a4cc3d7754b496765ce6efc17300650a2d87adeffed9b1e1af3c36",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p26",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 872.75,
+      "source_end_s": 880.89,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_26.mp4",
+      "sha256": "49b6e8e9f1240883a1a94ffd70214efc4a4212fc0589fc9fd30d083f3a6ab395",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    },
+    {
+      "id": "GKWNVYeEAlE_p27",
+      "licence": "CC BY",
+      "source": "https://www.youtube.com/watch?v=GKWNVYeEAlE",
+      "source_start_s": 887.54,
+      "source_end_s": 896.69,
+      "url": "https://gitlab.com/api/v4/projects/88614541/packages/generic/session-01-clips/1.0.0/GKWNVYeEAlE_27.mp4",
+      "sha256": "0d8939ecbfebe0fd7e9aa864f40ea25b7e76f90b62fba99cd312b901d7cae2ca",
+      "attribution": "\"Intermediate Level 3.5+ | Padel Match | Padel Match Point - @ Mariano Sports Arena\" by Padel Match Point (https://www.youtube.com/watch?v=GKWNVYeEAlE), Creative Commons Attribution licence (CC BY) on YouTube. Cut to a short clip, scaled to 480p, re-encoded, audio removed."
+    }
+  ],
+  "note": "session-01 volunteer clips (padel, 46). Licence read on each YouTube watch page on 2026-11-09. These are unlabeled cuts for the volunteer labeler, not verified point winners."
 }
