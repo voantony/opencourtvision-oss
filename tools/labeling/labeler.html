@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Point labels</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; font: 16px/1.4 "Segoe UI", system-ui, sans-serif; background: #12140f; color: #f4f1e8; }
+  header { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 20px; background: #1c2118; }
+  h1 { font-size: 18px; margin: 0; font-weight: 600; }
+  #progress { font-variant-numeric: tabular-nums; color: #d6e38a; }
+  main { max-width: 960px; margin: 0 auto; padding: 16px; }
+  video { width: 100%; background: #000; border-radius: 8px; max-height: 54vh; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  button { font: inherit; border: 0; border-radius: 8px; padding: 12px 18px; cursor: pointer; background: #2a3124; color: inherit; }
+  button:focus { outline: 2px solid #d6e38a; }
+  button.primary { background: #d6e38a; color: #1a1c14; font-weight: 650; }
+  button.on { box-shadow: inset 0 0 0 2px #d6e38a; }
+  button.prefill { outline: 2px dashed #e3b86a; }
+  #reveal { min-height: 1.4em; margin-top: 12px; color: #c8c2b4; }
+  #status { margin-top: 8px; color: #8d937f; font-size: 14px; }
+  #hint { margin-top: 4px; color: #e3b86a; font-size: 14px; min-height: 1.2em; }
+  kbd { font: inherit; background: #2a3124; border-radius: 4px; padding: 0 4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Point labels</h1>
+  <div id="progress">0 / 0</div>
+</header>
+<main>
+  <video id="player" playsinline controls></video>
+  <div class="row" id="winners">
+    <button class="primary" data-winner="A">A won <kbd>A</kbd></button>
+    <button class="primary" data-winner="B">B won <kbd>B</kbd></button>
+    <button data-winner="skip">Skip / clear <kbd>S</kbd></button>
+  </div>
+  <div class="row" id="servers">
+    <button data-server="A">Server A <kbd>1</kbd></button>
+    <button data-server="B">Server B <kbd>2</kbd></button>
+  </div>
+  <div class="row">
+    <button id="replay" type="button">Replay <kbd>R</kbd></button>
+    <button id="slow" type="button">Slow 0.5× <kbd>M</kbd></button>
+    <button id="next" type="button">Next unanswered <kbd>N</kbd></button>
+  </div>
+  <p id="hint"></p>
+  <p id="reveal"></p>
+  <p id="status">A is the near side, closest to the camera. The model guess stays hidden until you confirm.</p>
+</main>
+<script>
+const player = document.getElementById("player");
+const reveal = document.getElementById("reveal");
+const statusEl = document.getElementById("status");
+const hintEl = document.getElementById("hint");
+const progress = document.getElementById("progress");
+let session = null;
+let index = 0;
+let shown = -1;
+let server = null;
+let slow = false;
+
+function needsAttention(p) {
+  if (!p.answer) return true;
+  return p.answer.confirmed === false;
+}
+
+function unansweredIndex() {
+  const i = session.points.findIndex(needsAttention);
+  return i === -1 ? 0 : i;
+}
+
+function show() {
+  const points = session.points;
+  const done = points.filter(p => p.answer && p.answer.confirmed !== false).length;
+  progress.textContent = done + " / " + points.length;
+  if (!points.length) { statusEl.textContent = "Queue is empty."; return; }
+  const p = points[index];
+  player.src = p.clip;
+  player.playbackRate = slow ? 0.5 : 1;
+  player.play().catch(() => {});
+  if (shown !== index) {
+    server = (p.answer && p.answer.server) || null;
+    shown = index;
+  }
+  document.querySelectorAll("[data-server]").forEach(b => b.classList.toggle("on", b.dataset.server === server));
+  const prefill = p.answer && p.answer.confirmed === false ? p.answer.winner : null;
+  document.querySelectorAll("[data-winner]").forEach(b => {
+    b.classList.toggle("prefill", prefill != null && b.dataset.winner === prefill);
+    b.classList.toggle("on", p.answer && p.answer.confirmed !== false && b.dataset.winner === p.answer.winner);
+  });
+  if (prefill && (prefill === "A" || prefill === "B")) {
+    hintEl.textContent = "Unconfirmed prefill " + prefill + " — press " + prefill + " to confirm, the other to fix, S to clear.";
+  } else if (prefill === "skip") {
+    hintEl.textContent = "Unconfirmed skip — press A/B to label, S to keep clear.";
+  } else {
+    hintEl.textContent = "";
+  }
+  if (p.answer && p.answer.confirmed !== false && p.p_a != null) {
+    const rules = (p.rules || []).join(", ");
+    reveal.textContent = "Saved " + p.answer.winner + ". Model p(A) " + Number(p.p_a).toFixed(2)
+      + (p.reason ? " · " + p.reason : "") + (rules ? " · " + rules : "");
+  } else {
+    reveal.textContent = "";
+  }
+  statusEl.textContent = "Point " + p.idx + " · " + p.start.toFixed(1) + "s–" + p.end.toFixed(1) + "s. A is near.";
+}
+
+async function load() {
+  const res = await fetch("/api/session");
+  session = await res.json();
+  index = unansweredIndex();
+  show();
+}
+
+async function answer(winner) {
+  const p = session.points[index];
+  const res = await fetch("/api/answer", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({id: p.id, winner: winner, server: server})
+  });
+  const body = await res.json();
+  if (!res.ok) { statusEl.textContent = body.error || "save failed"; return; }
+  session.points[index] = Object.assign({}, body.point, {answer: body.answer});
+  show();
+  // After confirm/fix/clear, advance to next that still needs attention.
+  const nxt = unansweredIndex();
+  if (nxt !== index && session.points[index].answer && session.points[index].answer.confirmed !== false) {
+    index = nxt;
+    shown = -1;
+    show();
+  }
+}
+
+document.getElementById("winners").addEventListener("click", ev => {
+  const b = ev.target.closest("[data-winner]");
+  if (b) answer(b.dataset.winner);
+});
+document.getElementById("servers").addEventListener("click", ev => {
+  const b = ev.target.closest("[data-server]");
+  if (!b) return;
+  server = server === b.dataset.server ? null : b.dataset.server;
+  document.querySelectorAll("[data-server]").forEach(x => x.classList.toggle("on", x.dataset.server === server));
+});
+document.getElementById("replay").addEventListener("click", () => { player.currentTime = 0; player.play(); });
+document.getElementById("slow").addEventListener("click", () => {
+  slow = !slow;
+  player.playbackRate = slow ? 0.5 : 1;
+  document.getElementById("slow").classList.toggle("on", slow);
+});
+document.getElementById("next").addEventListener("click", () => { index = unansweredIndex(); shown = -1; show(); });
+document.addEventListener("keydown", ev => {
+  if (ev.metaKey || ev.ctrlKey || ev.altKey) return;
+  const k = ev.key.toLowerCase();
+  if (k === "a" || k === "b") { answer(k.toUpperCase()); ev.preventDefault(); }
+  else if (k === "s") { answer("skip"); ev.preventDefault(); }
+  else if (k === "1" || k === "2") {
+    const pick = k === "1" ? "A" : "B";
+    server = server === pick ? null : pick;
+    document.querySelectorAll("[data-server]").forEach(x => x.classList.toggle("on", x.dataset.server === server));
+  }
+  else if (k === "r") { player.currentTime = 0; player.play(); }
+  else if (k === "m") { slow = !slow; player.playbackRate = slow ? 0.5 : 1; document.getElementById("slow").classList.toggle("on", slow); }
+  else if (k === "n") { index = unansweredIndex(); shown = -1; show(); }
+});
+load().catch(err => { statusEl.textContent = "Open this page from serve.py so labels can autosave. " + err; });
+</script>
+</body>
+</html>

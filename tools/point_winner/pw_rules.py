@@ -94,7 +94,7 @@ def next_state(score, winner, server):
 def rule_next_serve(score, server, flips_before, obs_side, obs_box, nearA0=1.0, obs_change=None):
     """Which outcome explains the next point's serve? obs_side: +1 near / -1 far server (None if unseen); obs_box:
     'deuce'/'ad'/None. obs_change: True if the break before the next serve is a changeover (> ~75 s; points <= 65 s on
-    dev_match), False if short, None unknown. flips_before = end changes before this point. Fires only if exactly one
+    17 Oct), False if short, None unknown. flips_before = end changes before this point. Fires only if exactly one
     outcome matches."""
     if obs_side is None and obs_change is None:
         return None, None
@@ -145,3 +145,101 @@ def rule_pose(f, thr=0.5):
     if v is None or abs(v) < thr:
         return None, None
     return (1 if v > 0 else -1), "arms_up"
+
+
+# ------------------------------------------------------------------ rules-first p(A)
+# Hard rules (Antony's order on issue 1): ace/unreturned serve, double fault, net, bounce clearly in or out,
+# and what the next serve implies. Each of those functions already abstains unless the evidence is clear.
+# Pose and other behaviour are soft. Audio contributes hit timing only: a team side, never samples, and nothing
+# is written. The decoder then applies score constraints, callouts and an optional final score.
+# This module does not read a label file and does not set p(A) from the winner it is being scored against.
+
+RULE_P = 0.92          # a fired rule, not 1: leaves room for the decoder and for calibration
+SOFT_SHRINK = 0.5
+ABSTAIN_P = 0.5
+ABSTAIN_BAND = 0.08
+# Rules the ask queue must not send back for re-labelling. They already fired.
+RESOLVED_RULES = frozenset({"ace_unreturned", "double_fault", "net", "bounce_in", "bounce_out", "next_serve"})
+
+
+def _team_from_kind(kind, near_is_A):
+    """kind +1 is the near side. near_is_A maps that side to team A."""
+    if kind in ("A", "B"):
+        return kind
+    if kind in (1, -1):
+        near = kind > 0
+        return "A" if near == bool(near_is_A) else "B"
+    return None
+
+
+def behaviour_cue(pose_out, near_is_A=True):
+    """Turn a pose rule (near/far) into a soft cue. None when the pose rule abstained."""
+    if not pose_out or pose_out[0] is None:
+        return None
+    team = _team_from_kind(pose_out[0], near_is_A)
+    if team not in ("A", "B"):
+        return None
+    return (0.7 if team == "A" else 0.3, 0.5)
+
+
+def _audio_cue(audio_side):
+    """Hit-timing side only. Not a path, not samples, and this function does not write."""
+    if audio_side is None:
+        return None
+    if audio_side not in ("A", "B"):
+        raise TypeError("audio_side must be 'A' or 'B' from in-memory hit timing, not audio samples or a file")
+    return (0.65 if audio_side == "A" else 0.35, 0.5)
+
+
+def p_a_from_cues(serve=None, net=None, bounce=None, next_serve=None, near_is_A=True,
+                  ball=None, behaviour=None, audio_side=None):
+    """Fuse rule outputs into one p(A).
+
+    Hard rules, each (side, name) or None when that rule abstained:
+      serve — ace_unreturned or double_fault, already a team
+      net, bounce — near/far (+1/-1), bounce only when clearly in or clearly out
+      next_serve — the team implied by the next serve
+    Soft, used only when every hard rule abstained or they contradict:
+      ball, behaviour — (p_a, weight)
+      audio_side — 'A' or 'B' from hit timing. Samples are not accepted and nothing is saved.
+    Contradicting hard rules abstain. Returns dict(p_a, abstain, rules, tier).
+    """
+    fired = []
+    for item in (serve, net, bounce, next_serve):
+        if not item or item[0] is None:
+            continue
+        team = _team_from_kind(item[0], near_is_A)
+        if team in ("A", "B"):
+            fired.append((team, item[1]))
+    teams = {t for t, _ in fired}
+    names = [n for _, n in fired]
+    if len(teams) == 1:
+        team = next(iter(teams))
+        return {"p_a": RULE_P if team == "A" else 1.0 - RULE_P, "abstain": False, "rules": names, "tier": "rule"}
+    cues = []
+    for item in (ball, behaviour, _audio_cue(audio_side)):
+        if not item:
+            continue
+        p, w = float(item[0]), float(item[1])
+        if w > 0 and 0.0 <= p <= 1.0:
+            cues.append((p, w))
+    if len(teams) > 1 or not cues:
+        return {"p_a": ABSTAIN_P, "abstain": True, "rules": names, "tier": "conflict" if teams else "abstain"}
+    raw = sum(p * w for p, w in cues) / sum(w for _, w in cues)
+    p = ABSTAIN_P + (raw - ABSTAIN_P) * SOFT_SHRINK
+    return {"p_a": float(p), "abstain": abs(p - ABSTAIN_P) < ABSTAIN_BAND, "rules": names, "tier": "soft"}
+
+
+def decode_points(p_a, sport="tennis", preset="advantage", first_server="A", calls=None, final=None):
+    """Score decoder over p(A). Abstentions leave the path to the rules of tennis.
+
+    `calls` aligns with p_a. Each entry is an Obs (a heard score call) or None.
+    `final` is an optional sets tuple, e.g. (2, 0), passed through as a soft-or-hard constraint.
+    """
+    from opencourtvision.scoring.decoder import PointEvidence, decode
+    from opencourtvision.scoring.formats import get_format
+    calls = list(calls or [])
+    ev = []
+    for i, p in enumerate(p_a):
+        ev.append(PointEvidence(p_a=float(p), p_point=1.0, call=calls[i] if i < len(calls) else None))
+    return decode(ev, get_format(sport, preset), first_server=first_server, final=final)

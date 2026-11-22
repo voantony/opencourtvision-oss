@@ -240,7 +240,7 @@ This snapshot is published so people can help. It is not a finished product.
 
 **Point-winner scoring does not yet beat simple baselines** (for example “the server wins”) on the held-out match. That is the main place help is wanted. The public harness is `python benchmarks/public_eval/run_eval.py`: it always prints always-A, always-B, server-wins and previous-winner, and exits 3 when the model does not beat the best of those. Please do not commit private match labels, footage, or faces.
 
-Other known weak spots include far-side and fast/blurry ball tracking, court calibration / homography after the camera is bumped, far-side player detection, and p(A) calibration.
+Other known weak spots include far-side and fast/blurry ball tracking, court calibration / homography after the camera is bumped, far-side player detection, and p(A) calibration. See the open issues labeled `help wanted`.
 
 How to film a match, including consent and the 18+ rule: [docs/filming.md](docs/filming.md).
 
