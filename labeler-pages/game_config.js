@@ -8,6 +8,11 @@
     xpPerCall: 10,
     roundSize: 10,
     minChecks: 10,
+    streakBonus: [
+      { streak: 3, bonus: 5 },
+      { streak: 5, bonus: 10 },
+      { streak: 10, bonus: 20 }
+    ],
     grades: [
       { id: "iniciacion", name: "Iniciación", points: 1 },
       { id: "intermedio", name: "Intermedio", points: 10 },

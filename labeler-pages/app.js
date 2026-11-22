@@ -16,6 +16,9 @@
   var boardFile = null;
   var state = load();
   var sessionCalls = 0;
+  var sessionCorrect = 0;
+  var sessionAnswered = 0;
+  var warmupResult = null;
 
   function load() {
     try {
@@ -28,10 +31,12 @@
         creditOptIn: !!s.creditOptIn,
         used: s.used || [],
         pending: s.pending || null,
-        sent: !!s.sent
+        sent: !!s.sent,
+        hotStreak: s.hotStreak || 0,
+        bestStreak: s.bestStreak || 0
       };
     } catch (e) {
-      return { nickname: "", adult: false, pointsCalled: 0, days: [], creditOptIn: false, used: [], pending: null, sent: false };
+      return { nickname: "", adult: false, pointsCalled: 0, days: [], creditOptIn: false, used: [], pending: null, sent: false, hotStreak: 0, bestStreak: 0 };
     }
   }
   function save() {
@@ -74,6 +79,12 @@
     return el("p", I18N.fill(t(key), { i: index + 1, n: total }), { class: "mono" });
   }
 
+  function sessionAccuracyText() {
+    if (!sessionAnswered) return "—";
+    var pct = Math.round((sessionCorrect / sessionAnswered) * 100);
+    return sessionCorrect + "/" + sessionAnswered + " · " + pct + "%";
+  }
+
   function flameRow() {
     var row = el("div", null, { class: "flame-row" });
     var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -88,8 +99,35 @@
     b.setAttribute("fill", "#C8F43C");
     svg.appendChild(a); svg.appendChild(b);
     row.appendChild(svg);
-    row.appendChild(el("span", String(sessionCalls), { class: "mono", id: "streak" }));
+    var streakWrap = el("span", null, { class: "hot-streak" });
+    streakWrap.appendChild(el("span", String(state.hotStreak), { class: "mono", id: "streak" }));
+    streakWrap.appendChild(document.createTextNode(" " + t("streakLabel")));
+    row.appendChild(streakWrap);
+    var accWrap = el("span", null, { class: "session-acc" });
+    accWrap.appendChild(document.createTextNode(t("accuracyLabel") + " "));
+    accWrap.appendChild(el("span", sessionAccuracyText(), { class: "mono", id: "accuracy" }));
+    row.appendChild(accWrap);
     return row;
+  }
+
+  function gradeProgressBlock() {
+    var p = R.gradeProgress(state.pointsCalled, CFG.grades);
+    var wrap = el("div", null, { class: "grade-progress", id: "grade-progress" });
+    if (!p.next) {
+      wrap.appendChild(el("p", t("gradeMax"), { class: "small" }));
+    } else {
+      var bar = el("div", null, { class: "progress-bar" });
+      var fill = el("div", null, { class: "progress-fill" });
+      fill.style.width = p.pct + "%";
+      bar.appendChild(fill);
+      wrap.appendChild(bar);
+      wrap.appendChild(el("p", I18N.fill(t("gradeNext"), { n: p.need, grade: p.next }), { class: "small", id: "grade-next" }));
+    }
+    return wrap;
+  }
+
+  function bestStreakLine() {
+    return el("p", I18N.fill(t("bestStreak"), { n: state.bestStreak }), { class: "mono", id: "best-streak" });
   }
 
   function stage(file) {
@@ -157,6 +195,8 @@
     app.appendChild(nick);
     app.appendChild(lab);
     app.appendChild(play);
+    app.appendChild(gradeProgressBlock());
+    if (state.bestStreak > 0) app.appendChild(bestStreakLine());
     app.appendChild(el("p", t("honest"), { class: "small", id: "honest" }));
     var boardLink = el("button", t("boardTitle"), { type: "button", class: "textlink", id: "open-board" });
     boardLink.addEventListener("click", showBoard);
@@ -178,12 +218,23 @@
       var card = el("div", null, { class: "card feedback-card", id: "feedback-card" });
       card.appendChild(el("p", fb.text, { class: fb.right ? "pill-ok" : "pill-bad", id: "feedback" }));
       card.appendChild(el("p", fb.reason, { id: "reason" }));
+      if (warmupResult && warmupResult.xp > 0) {
+        card.appendChild(el("p", I18N.fill(t("xp"), { n: warmupResult.xp }), { class: "mono", id: "warmup-xp" }));
+      }
       card.appendChild(el("p", t("warmupTag"), { class: "small" }));
       app.appendChild(card);
     } else {
       app.appendChild(el("p", t("legend"), { class: "legend", id: "legend" }));
       app.appendChild(callButtons(function (call) {
         sessionCalls += 1;
+        var fb = R.playerFeedback("warmup", point, call, lang);
+        sessionAnswered += 1;
+        if (fb.right) sessionCorrect += 1;
+        var res = R.applyStreak(state.hotStreak, fb.right, CFG.streakBonus);
+        state.hotStreak = res.streak;
+        if (res.streak > state.bestStreak) state.bestStreak = res.streak;
+        warmupResult = { right: fb.right, bonus: res.bonus, xp: fb.right ? CFG.xpPerCall + res.bonus : 0 };
+        save();
         showWarmup(index, call);
       }, false, null));
       app.appendChild(el("p", t("warmupTag"), { class: "small warmup-tag" }));
@@ -294,6 +345,8 @@
       grades.appendChild(el("li", g.name + " " + g.need, { class: g.cls }));
     });
     app.appendChild(grades);
+    app.appendChild(gradeProgressBlock());
+    app.appendChild(bestStreakLine());
     var opt = el("label", null, { class: "check" });
     var optBox = el("input", null, { id: "credits-opt", type: "checkbox" });
     optBox.checked = false;

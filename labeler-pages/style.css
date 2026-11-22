@@ -27,3 +27,11 @@ button.btn.call.on:disabled {
   background: transparent;
   opacity: 1;
 }
+.flame-row { display: flex; align-items: center; gap: 8px; }
+.flame-row .flame { width: 22px; height: 22px; flex: none; }
+.flame-row .hot-streak { display: inline-flex; align-items: baseline; gap: 4px; }
+.flame-row .session-acc { margin-left: auto; color: var(--mist); font-size: 0.85rem; }
+.grade-progress { margin-top: 12px; }
+.progress-bar { height: 8px; border-radius: 999px; border: 1px solid var(--mist); overflow: hidden; }
+.progress-fill { height: 100%; background: var(--volt); width: 0; }
+.grade-progress .small { margin-top: 6px; }

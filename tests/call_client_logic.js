@@ -29,6 +29,43 @@ const fresh = round.gradeState(10, game.grades, []);
 assert.strictEqual(fresh.find((g) => g.name === "Intermedio").cls, "fresh");
 assert.strictEqual(fresh.find((g) => g.name === "Pro").cls, "locked");
 
+assert.deepStrictEqual(game.streakBonus.map((t) => [t.streak, t.bonus]), [[3, 5], [5, 10], [10, 20]]);
+assert.strictEqual(round.streakBonus(0, game.streakBonus), 0);
+assert.strictEqual(round.streakBonus(2, game.streakBonus), 0);
+assert.strictEqual(round.streakBonus(3, game.streakBonus), 5);
+assert.strictEqual(round.streakBonus(4, game.streakBonus), 5);
+assert.strictEqual(round.streakBonus(5, game.streakBonus), 10);
+assert.strictEqual(round.streakBonus(9, game.streakBonus), 10);
+assert.strictEqual(round.streakBonus(10, game.streakBonus), 20);
+assert.strictEqual(round.streakBonus(25, game.streakBonus), 20);
+assert.deepStrictEqual(round.applyStreak(0, true, game.streakBonus), { streak: 1, bonus: 0 });
+assert.deepStrictEqual(round.applyStreak(2, true, game.streakBonus), { streak: 3, bonus: 5 });
+assert.deepStrictEqual(round.applyStreak(4, true, game.streakBonus), { streak: 5, bonus: 10 });
+assert.deepStrictEqual(round.applyStreak(9, true, game.streakBonus), { streak: 10, bonus: 20 });
+assert.deepStrictEqual(round.applyStreak(7, false, game.streakBonus), { streak: 0, bonus: 0 });
+assert.deepStrictEqual(round.applyStreak(0, false, game.streakBonus), { streak: 0, bonus: 0 });
+
+const prog0 = round.gradeProgress(0, game.grades);
+assert.strictEqual(prog0.current, null);
+assert.strictEqual(prog0.next, "Iniciación");
+assert.strictEqual(prog0.need, 1);
+assert.strictEqual(prog0.pct, 0);
+const prog5 = round.gradeProgress(5, game.grades);
+assert.strictEqual(prog5.current, "Iniciación");
+assert.strictEqual(prog5.next, "Intermedio");
+assert.strictEqual(prog5.need, 5);
+assert.strictEqual(prog5.pct, 44);
+const prog10 = round.gradeProgress(10, game.grades);
+assert.strictEqual(prog10.current, "Intermedio");
+assert.strictEqual(prog10.next, "Avanzado");
+assert.strictEqual(prog10.need, 40);
+assert.strictEqual(prog10.pct, 0);
+const progMax = round.gradeProgress(200, game.grades);
+assert.strictEqual(progMax.current, "Pro");
+assert.strictEqual(progMax.next, null);
+assert.strictEqual(progMax.need, 0);
+assert.strictEqual(progMax.pct, 100);
+
 const board = round.leaderboardRows({
   rows: [
     { nickname: "tapper", points: 5000, accuracy: 0.2, check_count: 1, opt_in: true, accuracy_band: "low" },
@@ -85,6 +122,14 @@ assert.strictEqual(i18n.t("en", "boardAccuracy"), "Accuracy");
 assert.strictEqual(i18n.t("es", "boardAccuracy"), "Precisión");
 assert.strictEqual(i18n.t("en", "back"), "← Back");
 assert.strictEqual(i18n.t("es", "back"), "← Volver");
+assert.strictEqual(i18n.t("en", "streakLabel"), "streak");
+assert.strictEqual(i18n.t("es", "streakLabel"), "racha");
+assert.strictEqual(i18n.t("en", "gradeMax"), "Top grade reached");
+assert.strictEqual(i18n.t("es", "gradeMax"), "Grado máximo alcanzado");
+assert.ok(i18n.t("en", "gradeNext").includes("{n}"));
+assert.ok(i18n.t("es", "gradeNext").includes("{n}"));
+assert.strictEqual(i18n.fill(i18n.t("en", "gradeNext"), { n: 5, grade: "Intermedio" }), "5 points to Intermedio");
+assert.strictEqual(i18n.fill(i18n.t("es", "gradeNext"), { n: 5, grade: "Intermedio" }), "5 puntos para Intermedio");
 
 const card = share.cardCopy(i18n, "en", 12, "Intermedio");
 assert.strictEqual(card.host, "https://opencourtvision-10a09b.gitlab.io");

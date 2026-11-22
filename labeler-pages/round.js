@@ -128,6 +128,38 @@
     return names;
   }
 
+  function streakBonus(streak, tiers) {
+    var best = 0;
+    (tiers || []).forEach(function (t) {
+      if (streak >= t.streak && t.bonus > best) best = t.bonus;
+    });
+    return best;
+  }
+
+  function applyStreak(streak, correct, tiers) {
+    var next = correct ? streak + 1 : 0;
+    return { streak: next, bonus: correct ? streakBonus(next, tiers) : 0 };
+  }
+
+  function gradeProgress(points, grades) {
+    var list = grades || [];
+    var current = null;
+    var next = null;
+    list.forEach(function (g) {
+      if (points >= g.points) current = g;
+      else if (!next) next = g;
+    });
+    if (!next) return { current: current ? current.name : null, next: null, need: 0, have: 0, pct: 100 };
+    var base = current ? current.points : 0;
+    var span = next.points - base;
+    var have = points - base;
+    if (have < 0) have = 0;
+    var pct = span > 0 ? Math.round((have / span) * 100) : 100;
+    if (pct < 0) pct = 0;
+    if (pct > 100) pct = 100;
+    return { current: current ? current.name : null, next: next.name, need: next.points - points, have: have, pct: pct };
+  }
+
   function prevDay(iso) {
     var t = Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10));
     return new Date(t - 86400000).toISOString().slice(0, 10);
@@ -180,6 +212,9 @@
     submissionCalls: submissionCalls,
     gradeState: gradeState,
     unlockedNames: unlockedNames,
+    streakBonus: streakBonus,
+    applyStreak: applyStreak,
+    gradeProgress: gradeProgress,
     streak: streak,
     leaderboardRows: leaderboardRows
   };
