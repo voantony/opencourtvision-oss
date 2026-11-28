@@ -1,3 +1,10 @@
+> [!CAUTION]
+> **This repository is deprecated and will be archived.**
+>
+> Development continues at <https://github.com/voantony/OpenCourtVision> under the MIT licence.
+>
+> Code here remains under its existing AGPL-3.0 licence.
+
 # OpenCourtVision
 
 Multimodal tools that fuse **audio and vision** to turn a fixed-camera tennis match recording (phone on the fence,
